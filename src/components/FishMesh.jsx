@@ -3,69 +3,72 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { createFlock } from '../utils/boids';
+import useCursorWorld from '../hooks/useCursorWorld';
 import fishVert from '../shaders/fish.vert';
 import fishFrag from '../shaders/fish.frag';
 
 const MAX_FISH_COUNT = 150;
-const BOUNDS = { x: 25, y: 18, z: 20 };
+const BOUNDS = { x: 40, y: 25, z: 30 };
 
-const FishMesh = () => {
+const FishMesh = ({ 
+  foodRef, 
+  count = 20, 
+  speed = 1.0, 
+  bounds = { x: 40, y: 25, z: 30 },
+  palette = ['#22d3ee', '#06b6d4', '#0891b2', '#0e7490']
+}) => {
   const meshRef = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
   
+  // Custom Hook for cursor tracking
+  const { getLerpedCursor } = useCursorWorld();
+  
   // Create Flock
-  const boids = useMemo(() => createFlock(MAX_FISH_COUNT, BOUNDS), []);
+  const boids = useMemo(() => createFlock(count, bounds, speed), [count, bounds, speed]);
 
   // Instance Attributes
   const colors = useMemo(() => {
-    const data = new Float32Array(MAX_FISH_COUNT * 3);
+    const data = new Float32Array(count * 3);
     const color = new THREE.Color();
-    const palettes = ['#22d3ee', '#818cf8', '#2dd4bf', '#fb7185'];
     
-    for (let i = 0; i < MAX_FISH_COUNT; i++) {
-      color.set(palettes[Math.floor(Math.random() * palettes.length)]);
+    for (let i = 0; i < count; i++) {
+      color.set(palette[Math.floor(Math.random() * palette.length)]);
       data[i * 3] = color.r;
       data[i * 3 + 1] = color.g;
       data[i * 3 + 2] = color.b;
     }
     return data;
-  }, []);
+  }, [count, palette]);
 
   const instanceIds = useMemo(() => {
-    const data = new Float32Array(MAX_FISH_COUNT);
-    for (let i = 0; i < MAX_FISH_COUNT; i++) data[i] = i;
+    const data = new Float32Array(count);
+    for (let i = 0; i < count; i++) data[i] = Math.random();
     return data;
-  }, []);
+  }, [count]);
 
-  // Improved Procedural Geometry
+  // Sleek Geometry
   const geometry = useMemo(() => {
-    const bodyGeo = new THREE.SphereGeometry(0.2, 12, 12);
-    bodyGeo.scale(0.6, 1.2, 2.5);
+    const bodyGeo = new THREE.SphereGeometry(0.2, 16, 16);
+    bodyGeo.scale(0.5, 1.2, 2.8);
     
-    const tailTop = new THREE.ConeGeometry(0.1, 0.6, 3);
+    const tailTop = new THREE.ConeGeometry(0.1, 0.8, 3);
     tailTop.rotateX(Math.PI / 2);
-    tailTop.rotateZ(Math.PI / 4);
-    tailTop.translate(0, 0.2, -0.7);
+    tailTop.rotateZ(Math.PI / 5);
+    tailTop.translate(0, 0.25, -0.8);
     
     const tailBottom = tailTop.clone();
-    tailBottom.rotateZ(Math.PI / 2);
-    tailBottom.translate(0, -0.4, 0);
+    tailBottom.rotateZ(Math.PI / 1.6);
+    tailBottom.translate(0, -0.5, 0);
 
-    const sideFinL = new THREE.ConeGeometry(0.06, 0.4, 3);
-    sideFinL.rotateZ(Math.PI / 2.5);
-    sideFinL.translate(-0.18, 0, 0.25);
+    const sideFinL = new THREE.ConeGeometry(0.04, 0.5, 3);
+    sideFinL.rotateZ(Math.PI / 3);
+    sideFinL.translate(-0.2, 0, 0.3);
     
     const sideFinR = sideFinL.clone();
     sideFinR.scale(-1, 1, 1);
-    sideFinR.translate(0.36, 0, 0);
+    sideFinR.translate(0.4, 0, 0);
 
-    const dorsalFin = new THREE.ConeGeometry(0.04, 0.5, 3);
-    dorsalFin.rotateX(Math.PI / 12);
-    dorsalFin.translate(0, 0.35, 0.1);
-
-    const merged = mergeGeometries([bodyGeo, tailTop, tailBottom, sideFinL, sideFinR, dorsalFin]);
-    
-    // Add instance attributes to geometry
+    const merged = mergeGeometries([bodyGeo, tailTop, tailBottom, sideFinL, sideFinR]);
     merged.setAttribute('aColor', new THREE.InstancedBufferAttribute(colors, 3));
     merged.setAttribute('aInstanceId', new THREE.InstancedBufferAttribute(instanceIds, 1));
     
@@ -82,8 +85,12 @@ const FishMesh = () => {
     const time = state.clock.getElapsedTime();
     uniforms.uTime.value = time;
 
+    // Get smoothed cursor position for evasion
+    const cursor = getLerpedCursor(0.1);
+
     boids.forEach((boid, i) => {
-      boid.update(boids, BOUNDS);
+      boid.update(boids, bounds, cursor, foodRef?.current || []);
+      
       dummy.position.copy(boid.position);
       
       if (boid.velocity.lengthSq() > 0.0001) {
@@ -104,14 +111,13 @@ const FishMesh = () => {
   useEffect(() => {
     return () => {
       geometry.dispose();
-      // material is ShaderMaterial, handled by R3F or manually
     };
   }, [geometry]);
 
   return (
     <instancedMesh
       ref={meshRef}
-      args={[geometry, null, MAX_FISH_COUNT]}
+      args={[geometry, null, count]}
     >
       <shaderMaterial
         vertexShader={fishVert}
