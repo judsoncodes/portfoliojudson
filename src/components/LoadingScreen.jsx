@@ -92,7 +92,7 @@ const LoadingScreen = ({ onComplete }) => {
       width: '100%',
       duration: 5,
       ease: 'power2.inOut',
-      onUpdate: function() {
+      onUpdate: function () {
         const progress = Math.round(this.progress() * 100);
         if (progressTextRef.current) {
           progressTextRef.current.innerText = progress.toString().padStart(3, '0');
@@ -120,7 +120,7 @@ const LoadingScreen = ({ onComplete }) => {
       {/* Visual FX Layers */}
       <GodRays />
       <MarineSnow />
-      
+
       {/* SVG Filters for Liquid Effect */}
       <svg className="hidden">
         <filter id="liquid">
@@ -130,26 +130,26 @@ const LoadingScreen = ({ onComplete }) => {
       </svg>
 
       <div className="loading-content w-full max-w-lg px-12 relative z-10 flex flex-col items-center" style={{ filter: 'url(#liquid)' }}>
-        
+
         {/* Extraordinary Centerpiece */}
         <div className="relative mb-20 group">
-          <motion.div 
+          <motion.div
             className="w-24 h-24 border-2 border-cyan-500/30 rounded-full flex items-center justify-center relative"
             animate={{ rotate: 360 }}
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
           >
             <div className="absolute inset-0 border-t-2 border-cyan-400 rounded-full shadow-[0_0_20px_#22d3ee]" />
             <div className="w-12 h-12 bg-cyan-900/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <motion.div 
+              <motion.div
                 className="w-4 h-4 bg-cyan-400 rounded-sm"
                 animate={{ scale: [1, 1.5, 1], rotate: [45, 135, 45] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
             </div>
           </motion.div>
-          
+
           {/* Scanning Line */}
-          <motion.div 
+          <motion.div
             className="absolute -inset-4 border-l-2 border-cyan-400/50"
             animate={{ left: ['0%', '100%', '0%'] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -188,19 +188,19 @@ const LoadingScreen = ({ onComplete }) => {
 
           {/* Liquid Progress Bar */}
           <div className="relative h-2 bg-cyan-950/30 rounded-full overflow-hidden backdrop-blur-md border border-cyan-500/10">
-            <div 
+            <div
               ref={progressBarRef}
               className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-600 to-cyan-300 shadow-[0_0_25px_#22d3ee]"
               style={{ width: '0%' }}
             />
             {/* Wave Overlay */}
-            <motion.div 
+            <motion.div
               className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)]"
               animate={{ x: ['-100%', '200%'] }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             />
           </div>
-          
+
           <div className="mt-6 flex justify-between opacity-30 text-[8px] tracking-[0.3em] uppercase">
             <span>Lat: 12.9817° N</span>
             <span>Lon: 80.2184° E</span>
@@ -210,7 +210,7 @@ const LoadingScreen = ({ onComplete }) => {
 
       {/* Background Caustics (CSS) */}
       <div className="absolute inset-0 opacity-10 pointer-events-none mix-blend-screen bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] scale-[3]" />
-      
+
       {/* Bottom Label */}
       <div className="absolute bottom-12 flex flex-col items-center gap-2">
         <div className="h-px w-24 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />

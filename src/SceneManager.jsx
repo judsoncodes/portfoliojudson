@@ -4,6 +4,7 @@ import { PerspectiveCamera, OrbitControls } from '@react-three/drei';
 import { Lights, OceanBackground, MarineLayer, UILayer } from './components/SceneElements';
 import CausticsLayer from './components/CausticsLayer';
 import FoodSystem from './components/FoodSystem';
+import MarineSnow from './components/MarineSnow';
 import useParallax from './hooks/useParallax';
 
 const SceneManager = () => {
@@ -64,6 +65,7 @@ const SceneManager = () => {
       <group name="SceneGraph">
         <OceanBackground />
         <CausticsLayer />
+        <MarineSnow />
         <FoodSystem foodRef={foodRef} />
         
         {/* Parallax Layers */}
