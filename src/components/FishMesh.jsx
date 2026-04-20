@@ -3,9 +3,11 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { createFlock } from '../utils/boids';
+import fishVert from '../shaders/fish.vert';
+import fishFrag from '../shaders/fish.frag';
 
-const MAX_FISH_COUNT = 100;
-const BOUNDS = { x: 20, y: 15, z: 15 };
+const MAX_FISH_COUNT = 150;
+const BOUNDS = { x: 25, y: 18, z: 20 };
 
 const FishMesh = () => {
   const meshRef = useRef();
@@ -14,46 +16,76 @@ const FishMesh = () => {
   // Create Flock
   const boids = useMemo(() => createFlock(MAX_FISH_COUNT, BOUNDS), []);
 
-  // Procedural Geometry
-  const geometry = useMemo(() => {
-    // Body: Tapered cone
-    const bodyGeo = new THREE.ConeGeometry(0.2, 1, 8);
-    bodyGeo.rotateX(Math.PI / 2); // Point forward along Z
+  // Instance Attributes
+  const colors = useMemo(() => {
+    const data = new Float32Array(MAX_FISH_COUNT * 3);
+    const color = new THREE.Color();
+    const palettes = ['#22d3ee', '#818cf8', '#2dd4bf', '#fb7185'];
     
-    // Tail: Two triangles
-    const tailGeo1 = new THREE.ConeGeometry(0.15, 0.4, 3);
-    tailGeo1.rotateZ(Math.PI);
-    tailGeo1.translate(0, 0, -0.6);
-    
-    const tailGeo2 = tailGeo1.clone();
-    tailGeo2.rotateZ(Math.PI / 2);
-
-    // Dorsal fin
-    const finGeo = new THREE.ConeGeometry(0.05, 0.3, 3);
-    finGeo.translate(0, 0.15, 0.1);
-
-    const merged = mergeGeometries([bodyGeo, tailGeo1, tailGeo2, finGeo]);
-    return merged;
+    for (let i = 0; i < MAX_FISH_COUNT; i++) {
+      color.set(palettes[Math.floor(Math.random() * palettes.length)]);
+      data[i * 3] = color.r;
+      data[i * 3 + 1] = color.g;
+      data[i * 3 + 2] = color.b;
+    }
+    return data;
   }, []);
 
-  const material = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#22d3ee',
-    emissive: '#083344',
-    roughness: 0.3,
-    metalness: 0.8,
+  const instanceIds = useMemo(() => {
+    const data = new Float32Array(MAX_FISH_COUNT);
+    for (let i = 0; i < MAX_FISH_COUNT; i++) data[i] = i;
+    return data;
+  }, []);
+
+  // Improved Procedural Geometry
+  const geometry = useMemo(() => {
+    const bodyGeo = new THREE.SphereGeometry(0.2, 12, 12);
+    bodyGeo.scale(0.6, 1.2, 2.5);
+    
+    const tailTop = new THREE.ConeGeometry(0.1, 0.6, 3);
+    tailTop.rotateX(Math.PI / 2);
+    tailTop.rotateZ(Math.PI / 4);
+    tailTop.translate(0, 0.2, -0.7);
+    
+    const tailBottom = tailTop.clone();
+    tailBottom.rotateZ(Math.PI / 2);
+    tailBottom.translate(0, -0.4, 0);
+
+    const sideFinL = new THREE.ConeGeometry(0.06, 0.4, 3);
+    sideFinL.rotateZ(Math.PI / 2.5);
+    sideFinL.translate(-0.18, 0, 0.25);
+    
+    const sideFinR = sideFinL.clone();
+    sideFinR.scale(-1, 1, 1);
+    sideFinR.translate(0.36, 0, 0);
+
+    const dorsalFin = new THREE.ConeGeometry(0.04, 0.5, 3);
+    dorsalFin.rotateX(Math.PI / 12);
+    dorsalFin.translate(0, 0.35, 0.1);
+
+    const merged = mergeGeometries([bodyGeo, tailTop, tailBottom, sideFinL, sideFinR, dorsalFin]);
+    
+    // Add instance attributes to geometry
+    merged.setAttribute('aColor', new THREE.InstancedBufferAttribute(colors, 3));
+    merged.setAttribute('aInstanceId', new THREE.InstancedBufferAttribute(instanceIds, 1));
+    
+    return merged;
+  }, [colors, instanceIds]);
+
+  const uniforms = useMemo(() => ({
+    uTime: { value: 0 }
   }), []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
     
     const time = state.clock.getElapsedTime();
+    uniforms.uTime.value = time;
 
     boids.forEach((boid, i) => {
       boid.update(boids, BOUNDS);
-      
       dummy.position.copy(boid.position);
       
-      // Orient dummy based on velocity
       if (boid.velocity.lengthSq() > 0.0001) {
         dummy.lookAt(
           boid.position.x + boid.velocity.x,
@@ -61,11 +93,6 @@ const FishMesh = () => {
           boid.position.z + boid.velocity.z
         );
       }
-
-      // Tail wiggle sine wave on Z rotation keyed to boid speed
-      const speed = boid.velocity.length();
-      const wiggle = Math.sin(time * 10 + i) * 0.2 * (speed / boid.maxSpeed);
-      dummy.rotation.z += wiggle;
 
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
@@ -77,19 +104,23 @@ const FishMesh = () => {
   useEffect(() => {
     return () => {
       geometry.dispose();
-      material.dispose();
+      // material is ShaderMaterial, handled by R3F or manually
     };
-  }, [geometry, material]);
+  }, [geometry]);
 
   return (
     <instancedMesh
       ref={meshRef}
-      args={[geometry, material, MAX_FISH_COUNT]}
-      castShadow
-      receiveShadow
-    />
+      args={[geometry, null, MAX_FISH_COUNT]}
+    >
+      <shaderMaterial
+        vertexShader={fishVert}
+        fragmentShader={fishFrag}
+        uniforms={uniforms}
+        transparent
+      />
+    </instancedMesh>
   );
 };
 
 export default FishMesh;
-export { BOUNDS as FLOCK_BOUNDS };
