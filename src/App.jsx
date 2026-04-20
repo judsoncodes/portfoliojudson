@@ -1,34 +1,44 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
-
-function Scene() {
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="hotpink" />
-      </mesh>
-      <OrbitControls />
-    </>
-  );
-}
+import { AnimatePresence } from 'framer-motion';
+import SceneManager from './SceneManager';
+import LoadingScreen from './components/LoadingScreen';
+import WaveWash from './components/WaveWash';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [showWaveWash, setShowWaveWash] = useState(false);
+
   return (
-    <div className="w-full h-full">
-      <Canvas shadows>
+    <div className="w-full h-full bg-black">
+      <AnimatePresence>
+        {isLoading && (
+          <LoadingScreen onComplete={() => {
+            setIsLoading(false);
+            setShowWaveWash(true);
+          }} />
+        )}
+      </AnimatePresence>
+
+      <Canvas 
+        shadows 
+        gl={{ antialias: true, alpha: true }}
+      >
         <Suspense fallback={null}>
-          <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-          <Scene />
+          <SceneManager />
+          {showWaveWash && (
+            <WaveWash onComplete={() => setShowWaveWash(false)} />
+          )}
         </Suspense>
       </Canvas>
-      <div className="absolute top-10 left-10 text-white pointer-events-none">
-        <h1 className="text-4xl font-bold">Aquatic Portfolio</h1>
-        <p className="text-lg opacity-80">R3F + GSAP + Framer Motion</p>
-      </div>
+      
+      {/* UI Overlay */}
+      {!isLoading && (
+        <div className="absolute top-10 left-10 text-white pointer-events-none mix-blend-difference">
+          <h1 className="text-4xl font-bold tracking-tighter">JUDSON J</h1>
+          <p className="text-sm uppercase tracking-widest opacity-60">Fullstack Developer & ML Enthusiast</p>
+        </div>
+      )}
     </div>
   );
 }
