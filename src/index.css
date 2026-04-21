@@ -14,3 +14,37 @@ body,
   overflow: hidden;
   background: #000;
 }
+
+/* Sonar Pulse UI Effect */
+.sonar-lit {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-color: var(--depth-accent) !important;
+  box-shadow: 0 0 40px var(--depth-accent-glow), inset 0 0 30px var(--depth-accent-glow) !important;
+  filter: brightness(1.5) contrast(1.1) !important;
+  transform: scale(1.03);
+  position: relative;
+}
+
+.sonar-lit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.05) 3px,
+    transparent 4px
+  );
+  background-size: 100% 4px;
+  animation: sonar-scan 2s linear infinite;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@keyframes sonar-scan {
+  from { background-position: 0 0; }
+  to { background-position: 0 100%; }
+}
+
+

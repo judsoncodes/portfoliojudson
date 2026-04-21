@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import oceanVert from '../shaders/ocean.vert';
 import oceanFrag from '../shaders/ocean.frag';
 import { useScroll } from '../context/ScrollContext';
+import { DEPTH_ZONES } from '../utils/depthZones';
 
 const OceanBackground = () => {
   const meshRef = useRef();
@@ -23,15 +24,18 @@ const OceanBackground = () => {
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
     uDepthProgress: { value: 0 },
-    uColorTop: { value: new THREE.Color('#00b4d8') },
-    uColorBottom: { value: new THREE.Color('#03045e') }
+    uSunlitTop: { value: new THREE.Color(DEPTH_ZONES.SUNLIT.top) },
+    uSunlitBottom: { value: new THREE.Color(DEPTH_ZONES.SUNLIT.bottom) },
+    uTwilightTop: { value: new THREE.Color(DEPTH_ZONES.TWILIGHT.top) },
+    uTwilightBottom: { value: new THREE.Color(DEPTH_ZONES.TWILIGHT.bottom) },
+    uAbyssalTop: { value: new THREE.Color(DEPTH_ZONES.ABYSSAL.top) },
+    uAbyssalBottom: { value: new THREE.Color(DEPTH_ZONES.ABYSSAL.bottom) }
   }), []);
 
   useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
-      // Keep depth darkening logic
-      materialRef.current.uniforms.uDepthProgress.value = scrollProgress.current ?? 0;
+      materialRef.current.uniforms.uDepthProgress.value = scrollProgress.progress.current ?? 0;
     }
   });
 

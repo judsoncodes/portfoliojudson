@@ -4,10 +4,10 @@ import useScrollDepth from '../hooks/useScrollDepth';
 const ScrollContext = createContext(null);
 
 export const ScrollProvider = ({ children }) => {
-  const scrollProgress = useScrollDepth();
+  const scrollData = useScrollDepth();
 
   return (
-    <ScrollContext.Provider value={scrollProgress}>
+    <ScrollContext.Provider value={scrollData}>
       {children}
     </ScrollContext.Provider>
   );

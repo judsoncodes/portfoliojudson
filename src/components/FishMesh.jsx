@@ -78,18 +78,41 @@ const FishMesh = ({
     uTime: { value: 0 }
   }), []);
 
+  const lastPing = useRef({ pos: new THREE.Vector3(), time: -999 });
+
+  useEffect(() => {
+    const onPing = (e) => {
+      lastPing.current = { 
+        pos: e.detail.position.clone(), 
+        time: performance.now() / 1000 
+      };
+    };
+    window.addEventListener('sonar-ping', onPing);
+    return () => window.removeEventListener('sonar-ping', onPing);
+  }, []);
+
   useFrame((state) => {
     if (!meshRef.current) return;
     
     const time = state.clock.getElapsedTime();
     uniforms.uTime.value = time;
 
-    // Get smoothed cursor position for evasion
     const cursor = getLerpedCursor(0.1);
+    const pingAge = time - lastPing.current.time;
 
     boids.forEach((boid, i) => {
       boid.update(boids, bounds, cursor, foodRef?.current || []);
       
+      // Apply Sonar Shockwave Force
+      if (pingAge < 1.0) {
+        const distToPing = boid.position.distanceTo(lastPing.current.pos);
+        if (distToPing < 8.0) {
+          const force = (1.0 - pingAge) * 0.15 * (1.0 - distToPing / 8.0);
+          const push = new THREE.Vector3().subVectors(boid.position, lastPing.current.pos).normalize().multiplyScalar(force);
+          boid.velocity.add(push);
+        }
+      }
+
       dummy.position.copy(boid.position);
       
       // Scale — hero fish (first 3) are larger

@@ -5,6 +5,8 @@ import { Lights, OceanBackground, MarineLayer, UILayer } from './components/Scen
 import FoodSystem from './components/FoodSystem';
 import MarineSnow from './components/MarineSnow';
 import useParallax from './hooks/useParallax';
+import JellyfishGroup from './components/Jellyfish';
+import SonarPulse from './components/SonarPulse';
 
 const SceneManager = () => {
   const { gl, camera } = useThree();
@@ -67,10 +69,12 @@ const SceneManager = () => {
       
       <group name="SceneGraph">
         <OceanBackground />
-        <MarineSnow />
+        <MarineSnow count={3000} />
         <FoodSystem foodRef={foodRef} />
+        <JellyfishGroup />
+        <SonarPulse />
         
-        {/* Parallax Layers restored */}
+        {/* Layered Marine Life */}
         <group ref={bgRef} position={[0, 0, -3]}>
           <MarineLayer depth="bg" foodRef={foodRef} />
         </group>

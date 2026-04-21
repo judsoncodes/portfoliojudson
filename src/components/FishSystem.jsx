@@ -2,8 +2,6 @@ import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
-import fishVert from '../shaders/fish.vert';
-import fishFrag from '../shaders/fish.frag';
 
 // Spanning swarm settings
 const COUNT = 100; 
@@ -174,11 +172,10 @@ const FishSystem = () => {
 
   return (
     <instancedMesh ref={meshRef} args={[geometry, null, COUNT]} frustumCulled={false}>
-      <shaderMaterial
-        vertexShader={fishVert}
-        fragmentShader={fishFrag}
-        uniforms={uniforms}
+      <meshPhongMaterial
         transparent
+        opacity={0.8}
+        vertexColors
       />
     </instancedMesh>
   );
