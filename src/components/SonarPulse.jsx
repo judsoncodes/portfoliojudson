@@ -1,45 +1,36 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { useThree, useFrame } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
+import disposalManager from '../utils/DisposalManager';
 
 const PULSE_DURATION = 1.2;
 const LIT_DURATION = 1500;
 
 /**
  * SonarPulse Component
- * Emits a biological sonar ring on long-press or right-click.
- * Illuminates "sonar-target" elements in the DOM.
+ * Emits a sonar ring on long-press or right-click as per Prompt 20 requirements.
  */
 const SonarPulse = () => {
   const { camera, mouse } = useThree();
   const [pulses, setPulses] = useState([]);
   const longPressTimer = useRef(null);
-
-  // Map to track active lit elements and their timeouts
   const litElements = useMemo(() => new WeakMap(), []);
 
   const triggerPulse = useCallback(() => {
     // Project mouse to world coordinates at Z=0
-    const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(camera);
-    const dir = vector.sub(camera.position).normalize();
+    const dir = new THREE.Vector3(mouse.x, mouse.y, 0.5).unproject(camera).sub(camera.position).normalize();
     const distance = -camera.position.z / dir.z;
     const worldPos = camera.position.clone().add(dir.multiplyScalar(distance));
 
     const id = Math.random().toString(36).substr(2, 9);
     setPulses((prev) => [...prev, { id, position: worldPos }]);
 
-    // Dispatch global event for marine life to react
-    window.dispatchEvent(new CustomEvent('sonar-ping', { 
-      detail: { position: worldPos, radius: 8, strength: 1.5 } 
-    }));
-
     // Sonar Query: Highlight DOM targets
     const targets = document.querySelectorAll('[data-sonar-target]');
     targets.forEach((el) => {
       el.classList.add('sonar-lit');
       
-      // Clear existing timeout if any
       if (litElements.has(el)) {
         clearTimeout(litElements.get(el));
       }
@@ -59,26 +50,42 @@ const SonarPulse = () => {
       triggerPulse();
     };
 
-    const handlePointerDown = () => {
+    // Mobile: Two-finger long press detection
+    const handleTouchStart = (e) => {
+      if (e.touches.length === 2) {
+        longPressTimer.current = setTimeout(() => {
+          triggerPulse();
+        }, 500);
+      }
+    };
+
+    const handlePointerDown = (e) => {
+      // Don't trigger on touch (handled by handleTouchStart for 2 fingers)
+      if (e.pointerType === 'touch') return;
+      
       longPressTimer.current = setTimeout(() => {
         triggerPulse();
       }, 500);
     };
 
-    const handlePointerUp = () => {
+    const handleRelease = () => {
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current);
       }
     };
 
     window.addEventListener('contextmenu', handleContextMenu);
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchend', handleRelease);
     window.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointerup', handleRelease);
 
     return () => {
       window.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleRelease);
       window.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointerup', handleRelease);
     };
   }, [triggerPulse]);
 
@@ -102,7 +109,6 @@ const PulseRing = ({ position, onComplete }) => {
   useEffect(() => {
     if (!meshRef.current) return;
 
-    // Pulse Animation
     gsap.fromTo(
       meshRef.current.scale,
       { x: 0, y: 0, z: 0 },
@@ -123,7 +129,7 @@ const PulseRing = ({ position, onComplete }) => {
 
   return (
     <mesh ref={meshRef} position={position}>
-      <torusGeometry args={[1, 0.02, 16, 64]} />
+      <torusGeometry args={[1, 0.01, 16, 64]} />
       <meshBasicMaterial 
         ref={materialRef} 
         color="#00ffff" 

@@ -1,11 +1,13 @@
 import React, { useRef, useMemo, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import disposalManager from '../utils/DisposalManager';
+import useVisibility from '../hooks/useVisibility';
 
 const Caustics = () => {
   const meshRef = useRef();
   
-  const material = useMemo(() => new THREE.ShaderMaterial({
+  const material = useMemo(() => disposalManager.track(new THREE.ShaderMaterial({
     transparent: true,
     blending: THREE.AdditiveBlending,
     uniforms: {
@@ -44,10 +46,15 @@ const Caustics = () => {
         gl_FragColor = vec4(color, color.r * 0.3);
       }
     `
-  }), []);
+  })), []);
 
+  const { invalidate } = useThree();
+  const isVisible = useVisibility(meshRef);
+  
   useFrame((state) => {
+    if (!isVisible) return;
     material.uniforms.uTime.value = state.clock.getElapsedTime();
+    invalidate();
   });
 
   useEffect(() => {
@@ -83,8 +90,12 @@ const LightShafts = () => {
     }
   }, [count, positions, velocities]);
 
+  const { invalidate } = useThree();
+  const pointsRef = useRef();
+  const isVisible = useVisibility(pointsRef);
+
   useFrame((state) => {
-    if (!geometryRef.current) return;
+    if (!isVisible || !geometryRef.current) return;
     
     const time = state.clock.getElapsedTime();
     const attr = geometryRef.current.attributes.position;
@@ -106,6 +117,7 @@ const LightShafts = () => {
     }
     
     attr.needsUpdate = true;
+    invalidate();
   });
 
   useEffect(() => {
@@ -115,7 +127,7 @@ const LightShafts = () => {
   }, []);
 
   return (
-    <points>
+    <points ref={pointsRef}>
       <bufferGeometry ref={geometryRef}>
         <bufferAttribute
           attach="attributes-position"

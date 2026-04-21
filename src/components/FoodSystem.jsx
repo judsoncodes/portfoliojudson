@@ -1,6 +1,7 @@
 import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import disposalManager from '../utils/DisposalManager';
 import useCursorWorld from '../hooks/useCursorWorld';
 
 const MAX_FOOD_PARTICLES = 80;
@@ -82,14 +83,14 @@ const FoodSystem = ({ foodRef }) => {
     meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
-  const geometry = useMemo(() => new THREE.SphereGeometry(0.25, 16, 16), []);
-  const material = useMemo(() => new THREE.MeshPhongMaterial({
+  const geometry = useMemo(() => disposalManager.track(new THREE.SphereGeometry(0.25, 16, 16)), []);
+  const material = useMemo(() => disposalManager.track(new THREE.MeshPhongMaterial({
     color: '#fbbf24',
     emissive: '#f59e0b',
     emissiveIntensity: 10.0,
     shininess: 100,
     side: THREE.DoubleSide
-  }), []);
+  })), []);
 
   useEffect(() => {
     return () => {

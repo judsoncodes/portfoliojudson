@@ -1,8 +1,10 @@
 import React, { useRef, useMemo, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
+import disposalManager from '../utils/DisposalManager';
 import { useScroll } from '../context/ScrollContext';
+import useVisibility from '../hooks/useVisibility';
 
 const ORGANISM_COUNT = 18; // 15 + 3 more as requested
 const TENTACLES_PER_JELLY = 6;
@@ -20,6 +22,8 @@ const BioluminescentOrganisms = () => {
   const coreMeshRef = useRef();
   const tentacleMeshRef = useRef();
   const sharedMaterialRef = useRef();
+  const isVisible = useVisibility(bellMeshRef);
+  const { invalidate } = useThree();
 
   // Initial state for organisms
   const organisms = useMemo(() => {
@@ -65,12 +69,12 @@ const BioluminescentOrganisms = () => {
   }, []);
 
   // Geometries
-  const bellGeo = useMemo(() => new THREE.SphereGeometry(0.6, 64, 64, 0, Math.PI * 2, 0, Math.PI / 1.8), []);
-  const coreGeo = useMemo(() => new THREE.SphereGeometry(0.15, 16, 16), []);
-  const tentacleGeo = useMemo(() => new THREE.CylinderGeometry(0.015, 0.005, 1, 8), []);
+  const bellGeo = useMemo(() => disposalManager.track(new THREE.SphereGeometry(0.6, 64, 64, 0, Math.PI * 2, 0, Math.PI / 1.8)), []);
+  const coreGeo = useMemo(() => disposalManager.track(new THREE.SphereGeometry(0.15, 16, 16)), []);
+  const tentacleGeo = useMemo(() => disposalManager.track(new THREE.CylinderGeometry(0.015, 0.005, 1, 8)), []);
 
   useFrame((state) => {
-    if (!bellMeshRef.current || progress.current < 0.6) return;
+    if (!isVisible || !bellMeshRef.current || progress.current < 0.6) return;
 
     const time = state.clock.getElapsedTime();
     const globalOpacity = THREE.MathUtils.clamp((progress.current - 0.6) * 10, 0, 1);
@@ -137,6 +141,7 @@ const BioluminescentOrganisms = () => {
       sharedMaterialRef.current.emissiveIntensity = (Math.sin(time * 2) * 0.5 + 0.5) * 15 + 10;
       sharedMaterialRef.current.opacity = globalOpacity * 0.6;
     }
+    invalidate();
   });
 
   useEffect(() => {

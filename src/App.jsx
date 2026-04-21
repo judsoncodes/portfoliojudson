@@ -8,12 +8,15 @@ import OxygenGauge from './components/OxygenGauge';
 import WaveWash from './components/WaveWash';
 import { ScrollProvider } from './context/ScrollContext';
 
+import useDeviceProfile from './hooks/useDeviceProfile';
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showWaveWash, setShowWaveWash] = useState(false);
+  const profile = useDeviceProfile();
 
   return (
-    <div className="w-full h-full bg-black relative">
+    <div className="w-full h-full bg-black relative touch-none">
       <AnimatePresence>
         {isLoading && (
           <LoadingScreen onComplete={() => {
@@ -27,6 +30,8 @@ function App() {
         <Canvas 
           shadows 
           gl={{ antialias: true, alpha: true }}
+          dpr={profile.dpr}
+          frameloop="demand"
         >
           <Suspense fallback={null}>
             <SceneManager />

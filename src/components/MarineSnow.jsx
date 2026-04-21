@@ -1,9 +1,12 @@
 import React, { useRef, useMemo, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import useVisibility from '../hooks/useVisibility';
 
 const MarineSnow = ({ count = 3000 }) => {
   const mesh = useRef();
+  const { invalidate } = useThree();
+  const isVisible = useVisibility(mesh);
   
   // Create particle positions and velocities
   const [positions, velocities, offsets] = useMemo(() => {
@@ -23,7 +26,7 @@ const MarineSnow = ({ count = 3000 }) => {
   }, [count]);
 
   useFrame((state) => {
-    if (!mesh.current) return;
+    if (!isVisible || !mesh.current) return;
     const positionAttribute = mesh.current.geometry.attributes.position;
     const time = state.clock.getElapsedTime();
     
@@ -41,6 +44,7 @@ const MarineSnow = ({ count = 3000 }) => {
     }
     
     positionAttribute.needsUpdate = true;
+    invalidate();
   });
 
   useEffect(() => {
@@ -53,7 +57,7 @@ const MarineSnow = ({ count = 3000 }) => {
   }, []);
 
   return (
-    <points ref={mesh}>
+    <points key={count} ref={mesh}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
@@ -76,3 +80,4 @@ const MarineSnow = ({ count = 3000 }) => {
 };
 
 export default MarineSnow;
+

@@ -1,7 +1,9 @@
 import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useScroll } from '../context/ScrollContext';
+import disposalManager from '../utils/DisposalManager';
+import useVisibility from '../hooks/useVisibility';
 
 /**
  * Single Jellyfish Component
@@ -18,7 +20,7 @@ const Jellyfish = ({ index, position, colors }) => {
   const bellGeo = useMemo(() => {
     const geo = new THREE.SphereGeometry(0.4, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.6);
     geo.scale(1, 0.65, 1); 
-    return geo;
+    return disposalManager.track(geo);
   }, []);
 
   const undersideGeo = useMemo(() => {
@@ -29,11 +31,11 @@ const Jellyfish = ({ index, position, colors }) => {
       new THREE.Vector2(0.10, -0.16),
       new THREE.Vector2(0.0, -0.15)
     ];
-    return new THREE.LatheGeometry(points, 32);
+    return disposalManager.track(new THREE.LatheGeometry(points, 32));
   }, []);
 
   const innerGlowGeo = useMemo(() => {
-    return new THREE.SphereGeometry(0.32, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
+    return disposalManager.track(new THREE.SphereGeometry(0.32, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.5));
   }, []);
 
   // Tentacles
@@ -59,7 +61,7 @@ const Jellyfish = ({ index, position, colors }) => {
   }, []);
 
   // Materials
-  const bellMat = useMemo(() => new THREE.MeshPhysicalMaterial({
+  const bellMat = useMemo(() => disposalManager.track(new THREE.MeshPhysicalMaterial({
     color: colors.bell,
     emissive: colors.glow,
     emissiveIntensity: 1.5,
@@ -70,76 +72,61 @@ const Jellyfish = ({ index, position, colors }) => {
     transmission: 0.8,
     thickness: 1.0,
     side: THREE.DoubleSide
-  }), [colors]);
+  })), [colors]);
 
-  const undersideMat = useMemo(() => new THREE.MeshStandardMaterial({
+  const undersideMat = useMemo(() => disposalManager.track(new THREE.MeshStandardMaterial({
     color: colors.bell,
     transparent: true,
     opacity: 0.3,
     side: THREE.DoubleSide
-  }), [colors]);
+  })), [colors]);
 
-  const tentacleMat = useMemo(() => new THREE.MeshBasicMaterial({
+  const tentacleMat = useMemo(() => disposalManager.track(new THREE.MeshBasicMaterial({
     color: colors.glow,
     transparent: true,
     opacity: 0.8,
     blending: THREE.AdditiveBlending
-  }), [colors]);
+  })), [colors]);
 
-  const glowMat = useMemo(() => new THREE.MeshBasicMaterial({
+  const glowMat = useMemo(() => disposalManager.track(new THREE.MeshBasicMaterial({
     color: colors.glow,
     transparent: true,
     opacity: 0.2,
     blending: THREE.AdditiveBlending,
     side: THREE.BackSide
-  }), [colors]);
+  })), [colors]);
 
   const pointLightRef = useRef();
-
-  const lastPing = useRef({ pos: new THREE.Vector3(), time: -999 });
-
-  useEffect(() => {
-    const onPing = (e) => {
-      lastPing.current = { 
-        pos: e.detail.position.clone(), 
-        time: performance.now() / 1000 
-      };
-    };
-    window.addEventListener('sonar-ping', onPing);
-    return () => window.removeEventListener('sonar-ping', onPing);
-  }, []);
+  const isVisible = useVisibility(groupRef);
+  const { invalidate } = useThree();
 
   useFrame((state) => {
-    if (!groupRef.current) return;
+    if (!isVisible || !groupRef.current) return;
     const t = state.clock.getElapsedTime();
-    const pingAge = t - lastPing.current.time;
-    const distToPing = groupRef.current.position.distanceTo(lastPing.current.pos);
-    const isPingImpact = pingAge < 1.0 && distToPing < 10;
-    
-    const reactionBoost = isPingImpact ? (1.0 - pingAge) * 1.5 : 0;
-    const pulseSpeed = (0.8 + index * 0.15) * (1.0 + reactionBoost);
+    const pulseSpeed = 0.8 + index * 0.15;
     const pulse = Math.sin(t * pulseSpeed * Math.PI) * 0.5 + 0.5; 
     const contract = 1.0 - pulse * 0.3;
 
     bellRef.current.scale.set(1 + pulse * 0.1, contract, 1 + pulse * 0.1);
     undersideRef.current.scale.set(1 + pulse * 0.1, contract, 1 + pulse * 0.1);
     
-    groupRef.current.position.y += (pulse > 0.5 ? 0.008 : -0.003) * (1.0 + reactionBoost);
+    groupRef.current.position.y += (pulse > 0.5 ? 0.008 : -0.003);
     
     if (groupRef.current.position.y > position[1] + 3) groupRef.current.position.y = position[1] - 3;
     if (groupRef.current.position.y < position[1] - 3) groupRef.current.position.y = position[1] + 3;
 
     tentaclesRef.current.forEach((t_mesh, ti) => {
       if (t_mesh) {
-        t_mesh.rotation.x = Math.sin(t * 1.2 + ti * 0.4) * (0.2 + reactionBoost * 0.2);
-        t_mesh.rotation.z = Math.cos(t * 0.9 + ti * 0.6) * (0.2 + reactionBoost * 0.2);
+        t_mesh.rotation.x = Math.sin(t * 1.2 + ti * 0.4) * 0.2;
+        t_mesh.rotation.z = Math.cos(t * 0.9 + ti * 0.6) * 0.2;
       }
     });
 
-    bellMat.emissiveIntensity = (0.8 + pulse * 1.2) * (1.0 + reactionBoost * 2.0);
+    bellMat.emissiveIntensity = 0.8 + pulse * 1.2;
     if (pointLightRef.current) {
-      pointLightRef.current.intensity = (1.0 + pulse * 1.5) * (1.0 + reactionBoost * 2.0);
+      pointLightRef.current.intensity = 1.0 + pulse * 1.5;
     }
+    invalidate();
   });
 
   return (

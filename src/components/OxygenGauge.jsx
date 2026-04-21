@@ -15,14 +15,14 @@ const OxygenGauge = () => {
   useEffect(() => {
     let frameId;
     const sync = () => {
-      if (Math.abs(progress - scrollProgressRef.current) > 0.0001) {
-        setProgress(scrollProgressRef.current);
-      }
+      // Direct ref access is safe here as sync is recursive
+      const currentProgress = scrollProgressRef.current;
+      setProgress(currentProgress);
       frameId = requestAnimationFrame(sync);
     };
     frameId = requestAnimationFrame(sync);
     return () => cancelAnimationFrame(frameId);
-  }, [scrollProgressRef, progress]);
+  }, [scrollProgressRef]); // Only depend on the Ref object, not the state value
 
   // Calculate inverted bubble properties
   const bubbleOpacity = 1 - (progress * 0.7); 
