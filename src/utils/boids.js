@@ -26,7 +26,7 @@ export class Boid {
     this.perceptionRadius = 10.0;
     this.separationRadius = 4.0;
     this.evadeRadius = 6.0;
-    this.seekRadiusSq = 144.0; // 12 * 12
+    this.seekRadiusSq = 144.0; 
     
     this.burstTimer = Math.random() * 5;
     this.isBursting = false;
@@ -35,7 +35,6 @@ export class Boid {
   update(boids, bounds, cursorPosition = null, foodParticles = []) {
     this.acceleration.set(0, 0, 0);
     
-    // Burst and Glide
     this.burstTimer -= 0.016;
     if (this.burstTimer <= 0) {
       this.isBursting = !this.isBursting;
@@ -46,20 +45,9 @@ export class Boid {
     const forces = this.flock(boids);
     this.acceleration.add(forces);
     
-    // Evasion
     if (cursorPosition) {
       const evasion = this.flee(cursorPosition);
       this.acceleration.add(evasion.multiplyScalar(5.0));
-    }
-    
-    // Intense Food Seeking
-    if (foodParticles.length > 0) {
-      const { force, consumedIndex } = this.seekFood(foodParticles);
-      // Much stronger force for the feeding frenzy
-      this.acceleration.add(force.multiplyScalar(10.0));
-      if (consumedIndex !== -1) {
-        foodParticles[consumedIndex].expired = true;
-      }
     }
     
     this.velocity.add(this.acceleration);
@@ -67,44 +55,6 @@ export class Boid {
     this.position.add(this.velocity);
     
     this.edges(bounds);
-  }
-
-  seekFood(particles) {
-    let steering = _v5.set(0, 0, 0);
-    let consumedIndex = -1;
-    let closestDistSq = Infinity;
-    let target = null;
-
-    // Check all particles for the closest one
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      if (p.expired) continue;
-      
-      const dSq = this.position.distanceToSquared(p.position);
-      
-      // Increased consumption radius slightly for better feel
-      if (dSq < 0.3) {
-        consumedIndex = i;
-        break;
-      }
-
-      if (dSq < this.seekRadiusSq && dSq < closestDistSq) {
-        closestDistSq = dSq;
-        target = p.position;
-      }
-    }
-
-    if (target) {
-      steering.copy(target).sub(this.position);
-      steering.setLength(this.maxSpeed * 3.0); // Sprint to food
-      steering.sub(this.velocity);
-      // Intense attraction
-      const falloff = Math.max(closestDistSq * 0.05, 0.05);
-      steering.divideScalar(falloff); 
-      steering.clampLength(0, this.maxForce * 25.0);
-    }
-
-    return { force: steering, consumedIndex };
   }
 
   flee(target) {
@@ -122,7 +72,6 @@ export class Boid {
   }
 
   flock(boids) {
-    // During feeding, separation is slightly less important than getting the food
     const sep = this.separation(boids).multiplyScalar(2.5); 
     const ali = this.alignment(boids).multiplyScalar(0.8);
     const coh = this.cohesion(boids).multiplyScalar(0.4);
@@ -134,7 +83,7 @@ export class Boid {
     let total = 0;
     for (const other of boids) {
       const dSq = this.position.distanceToSquared(other.position);
-      if (other !== this && dSq < 25.0) { // 5 * 5
+      if (other !== this && dSq < 25.0) { 
         const diff = _scratch3.copy(this.position).sub(other.position);
         diff.divideScalar(Math.max(dSq, 0.1));
         steering.add(diff);
@@ -150,7 +99,7 @@ export class Boid {
     let total = 0;
     for (const other of boids) {
       const dSq = this.position.distanceToSquared(other.position);
-      if (other !== this && dSq < 100.0) { // 10 * 10
+      if (other !== this && dSq < 100.0) { 
         steering.add(other.velocity);
         total++;
       }
@@ -164,7 +113,7 @@ export class Boid {
     let total = 0;
     for (const other of boids) {
       const dSq = this.position.distanceToSquared(other.position);
-      if (other !== this && dSq < 100.0) { // 10 * 10
+      if (other !== this && dSq < 100.0) { 
         steering.add(other.position);
         total++;
       }
@@ -173,24 +122,46 @@ export class Boid {
     return steering;
   }
 
+  // STABLE EDGES: Steer back instead of teleporting to prevent "vanishing"
   edges(bounds) {
-    const { x, y, z } = bounds;
-    if (this.position.x > x) this.position.x = -x;
-    if (this.position.x < -x) this.position.x = x;
-    if (this.position.y > y) this.position.y = -y;
-    if (this.position.y < -y) this.position.y = y;
-    if (this.position.z > z) this.position.z = -z;
-    if (this.position.z < -z) this.position.z = z;
+    const xMin = bounds.xMin !== undefined ? bounds.xMin : -(bounds.x || 10);
+    const xMax = bounds.xMax !== undefined ? bounds.xMax : (bounds.x || 10);
+    const yMin = bounds.yMin !== undefined ? bounds.yMin : -(bounds.y || 10);
+    const yMax = bounds.yMax !== undefined ? bounds.yMax : (bounds.y || 10);
+    const zMin = bounds.zMin !== undefined ? bounds.zMin : -(bounds.z || 10);
+    const zMax = bounds.zMax !== undefined ? bounds.zMax : (bounds.z || 10);
+
+    const margin = 5.0; // Distance from edge to start steering back
+    const turnForce = 0.015;
+
+    if (this.position.x > xMax - margin) this.velocity.x -= turnForce;
+    if (this.position.x < xMin + margin) this.velocity.x += turnForce;
+    if (this.position.y > yMax - margin) this.velocity.y -= turnForce;
+    if (this.position.y < yMin + margin) this.velocity.y += turnForce;
+    if (this.position.z > zMax - margin) this.velocity.z -= turnForce;
+    if (this.position.z < zMin + margin) this.velocity.z += turnForce;
+
+    // Hard limit fail-safe (clamp instead of teleport)
+    this.position.x = Math.max(xMin, Math.min(xMax, this.position.x));
+    this.position.y = Math.max(yMin, Math.min(yMax, this.position.y));
+    this.position.z = Math.max(zMin, Math.min(zMax, this.position.z));
   }
 }
 
 export const createFlock = (n, bounds, speedMultiplier = 1.0) => {
   const boids = [];
+  const xMin = bounds.xMin !== undefined ? bounds.xMin : -(bounds.x || 10);
+  const xMax = bounds.xMax !== undefined ? bounds.xMax : (bounds.x || 10);
+  const yMin = bounds.yMin !== undefined ? bounds.yMin : -(bounds.y || 10);
+  const yMax = bounds.yMax !== undefined ? bounds.yMax : (bounds.y || 10);
+  const zMin = bounds.zMin !== undefined ? bounds.zMin : -(bounds.z || 10);
+  const zMax = bounds.zMax !== undefined ? bounds.zMax : (bounds.z || 10);
+
   for (let i = 0; i < n; i++) {
     boids.push(new Boid(
-      (Math.random() - 0.5) * bounds.x * 2,
-      (Math.random() - 0.5) * bounds.y * 2,
-      (Math.random() - 0.5) * bounds.z * 2,
+      xMin + Math.random() * (xMax - xMin),
+      yMin + Math.random() * (yMax - yMin),
+      zMin + Math.random() * (zMax - zMin),
       speedMultiplier
     ));
   }

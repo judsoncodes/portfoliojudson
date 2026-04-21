@@ -9,7 +9,7 @@ void main() {
     
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
     
-    // Wave displacement
+    // Wave displacement for the plane
     float elevation = sin(modelPosition.x * 0.5 + uTime) * 
                       cos(modelPosition.z * 0.5 + uTime * 0.5) * 0.5;
     

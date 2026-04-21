@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import SceneManager from './SceneManager';
 import LoadingScreen from './components/LoadingScreen';
 import WaveWash from './components/WaveWash';
+import { ScrollProvider } from './context/ScrollContext';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,10 +26,12 @@ function App() {
         gl={{ antialias: true, alpha: true }}
       >
         <Suspense fallback={null}>
-          <SceneManager />
-          {showWaveWash && (
-            <WaveWash onComplete={() => setShowWaveWash(false)} />
-          )}
+          <ScrollProvider>
+            <SceneManager />
+            {showWaveWash && (
+              <WaveWash onComplete={() => setShowWaveWash(false)} />
+            )}
+          </ScrollProvider>
         </Suspense>
       </Canvas>
       

@@ -65,7 +65,7 @@ const FoodSystem = ({ foodRef }) => {
         p.rotation.y += p.rotVel.y;
         
         dummy.position.copy(p.position);
-        dummy.rotation.copy(p.rotation);
+        // Removed lookAt as spheres are symmetrical
         
         // Dynamic scale - starts big, stays visible
         const scale = (p.lifetime / 10.0) * 0.6 + 0.2;
@@ -79,17 +79,16 @@ const FoodSystem = ({ foodRef }) => {
         meshRef.current.setMatrixAt(i, dummy.matrix);
       }
     }
-
     meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
-  const geometry = useMemo(() => new THREE.IcosahedronGeometry(0.18, 0), []);
-  const material = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#fbbf24', // Amber-400
-    emissive: '#f59e0b', // Amber-500
-    emissiveIntensity: 5.0, // High intensity glow
-    roughness: 0.2,
-    metalness: 0.5
+  const geometry = useMemo(() => new THREE.SphereGeometry(0.25, 16, 16), []);
+  const material = useMemo(() => new THREE.MeshPhongMaterial({
+    color: '#fbbf24',
+    emissive: '#f59e0b',
+    emissiveIntensity: 10.0,
+    shininess: 100,
+    side: THREE.DoubleSide
   }), []);
 
   useEffect(() => {
@@ -103,6 +102,7 @@ const FoodSystem = ({ foodRef }) => {
     <instancedMesh
       ref={meshRef}
       args={[geometry, material, MAX_FOOD_PARTICLES]}
+      frustumCulled={false}
     />
   );
 };

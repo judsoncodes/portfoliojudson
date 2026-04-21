@@ -8,7 +8,6 @@ import fishVert from '../shaders/fish.vert';
 import fishFrag from '../shaders/fish.frag';
 
 const MAX_FISH_COUNT = 150;
-const BOUNDS = { x: 40, y: 25, z: 30 };
 
 const FishMesh = ({ 
   foodRef, 
@@ -46,7 +45,7 @@ const FishMesh = ({
     return data;
   }, [count]);
 
-  // Sleek Geometry
+  // Sleek Original Geometry
   const geometry = useMemo(() => {
     const bodyGeo = new THREE.SphereGeometry(0.2, 16, 16);
     bodyGeo.scale(0.5, 1.2, 2.8);
@@ -93,6 +92,10 @@ const FishMesh = ({
       
       dummy.position.copy(boid.position);
       
+      // Scale — hero fish (first 3) are larger
+      const s = i < 3 ? 1.8 : 1.0;
+      dummy.scale.set(s, s, s);
+      
       if (boid.velocity.lengthSq() > 0.0001) {
         dummy.lookAt(
           boid.position.x + boid.velocity.x,
@@ -118,6 +121,7 @@ const FishMesh = ({
     <instancedMesh
       ref={meshRef}
       args={[geometry, null, count]}
+      frustumCulled={false}
     >
       <shaderMaterial
         vertexShader={fishVert}

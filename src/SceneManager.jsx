@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { PerspectiveCamera, OrbitControls } from '@react-three/drei';
 import { Lights, OceanBackground, MarineLayer, UILayer } from './components/SceneElements';
-import CausticsLayer from './components/CausticsLayer';
 import FoodSystem from './components/FoodSystem';
 import MarineSnow from './components/MarineSnow';
 import useParallax from './hooks/useParallax';
@@ -11,7 +10,7 @@ const SceneManager = () => {
   const { gl, camera } = useThree();
   const foodRef = useRef([]); 
   
-  // Parallax Hook
+  // Parallax Hook for layered depth movement
   const parallax = useParallax();
   
   // Refs for parallax groups
@@ -20,6 +19,7 @@ const SceneManager = () => {
   const bgRef = useRef();
 
   useFrame(() => {
+    // Apply parallax offsets to depth layers
     if (fgRef.current) {
       fgRef.current.position.x = parallax.x * 0.08;
       fgRef.current.position.y = parallax.y * 0.08;
@@ -50,6 +50,9 @@ const SceneManager = () => {
 
   return (
     <>
+      <color attach="background" args={['#010b14']} />
+      <fog attach="fog" args={['#010b14', 10, 50]} />
+      
       <PerspectiveCamera 
         makeDefault 
         fov={60} 
@@ -64,11 +67,10 @@ const SceneManager = () => {
       
       <group name="SceneGraph">
         <OceanBackground />
-        <CausticsLayer />
         <MarineSnow />
         <FoodSystem foodRef={foodRef} />
         
-        {/* Parallax Layers */}
+        {/* Parallax Layers restored */}
         <group ref={bgRef} position={[0, 0, -3]}>
           <MarineLayer depth="bg" foodRef={foodRef} />
         </group>

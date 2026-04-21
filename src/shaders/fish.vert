@@ -1,10 +1,12 @@
-attribute float aInstanceId;
+precision highp float;
+
 attribute vec3 aColor;
+attribute float aInstanceId;
 
 varying vec2 vUv;
+varying vec3 vColor;
 varying vec3 vNormal;
 varying vec3 vViewPosition;
-varying vec3 vColor;
 
 uniform float uTime;
 
@@ -17,7 +19,7 @@ void main() {
     
     // Wiggle intensity based on Z position (tail wiggles more)
     float wiggleStrength = smoothstep(0.5, -1.0, pos.z) * 0.15;
-    float wiggle = sin(uTime * 10.0 + aInstanceId + pos.z * 5.0) * wiggleStrength;
+    float wiggle = sin(uTime * 10.0 + aInstanceId * 3.0 + pos.z * 5.0) * wiggleStrength;
     pos.x += wiggle;
     
     vec4 modelPosition = modelMatrix * instanceMatrix * vec4(pos, 1.0);
