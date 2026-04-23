@@ -7,6 +7,7 @@ import ContentLayer from './components/ContentLayer';
 import OxygenGauge from './components/OxygenGauge';
 import WaveWash from './components/WaveWash';
 import DepthNarrative from './components/DepthNarrative';
+import CinematicLens from './components/CinematicLens';
 import { ScrollProvider, useScroll } from './context/ScrollContext';
 
 import useDeviceProfile from './hooks/useDeviceProfile';
@@ -93,11 +94,12 @@ function App() {
       
       {/* UI Overlay */}
       {!isLoading && (
-        <div className="absolute top-10 left-10 text-white pointer-events-none mix-blend-difference z-50">
-          <h1 className="text-4xl font-bold tracking-tighter uppercase italic">JUDSON J</h1>
-          <p className="text-xs uppercase tracking-[0.4em] opacity-60">Fullstack Engineer // Machine Learning</p>
+        <div className="absolute top-10 left-10 text-white pointer-events-none mix-blend-difference z-[70]">
+          <h1 className="text-4xl font-black tracking-tighter uppercase italic font-outfit">JUDSON J</h1>
+          <p className="text-[10px] uppercase tracking-[0.6em] opacity-60 font-mono">Abyssal Architect // Fullstack Engineer</p>
         </div>
       )}
+      <CinematicLens />
     </div>
   );
 }

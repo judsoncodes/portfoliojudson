@@ -59,20 +59,21 @@ export default function AboutSection() {
 
         {/* EPIC NARRATIVE */}
         <p style={{
-          fontFamily: 'monospace',
-          fontSize: 'clamp(14px, 4vw, 17px)',
-          lineHeight: 'clamp(1.5, 3vw, 2.0)',
-          color: 'rgba(180, 220, 255, 0.9)',
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 'clamp(14px, 4vw, 15px)',
+          lineHeight: '1.8',
+          color: 'rgba(180, 220, 255, 0.8)',
           maxWidth: '650px',
-          margin: '25px 0',
-          borderLeft: '3px solid #00ffcc',
-          paddingLeft: '20px',
-          textShadow: '0 0 20px rgba(0,0,0,1)'
+          margin: '30px 0',
+          borderLeft: '2px solid #00ffcc',
+          paddingLeft: '25px',
+          textShadow: '0 0 20px rgba(0,0,0,1)',
+          letterSpacing: '-0.02em'
         }}>
           I command the monoliths that stand at the edge of the digital abyss. 
           As an architect of supreme resilience, I navigate the crushing pressures 
           of Machine Learning and Fullstack systems. With 300+ tactical algorithmic 
-          solutions on LeetCode and a mastery over the primal languages of C++, Python, and Java, 
+          solutions and a mastery over the primal languages of C++, Python, and Java, 
           I engineer the legendary structures that define the future of the deep.
         </p>
 

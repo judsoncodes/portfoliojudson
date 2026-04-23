@@ -16,105 +16,107 @@ export default function ArtifactsSection({ projects }) {
             transition={{ duration: 0.8, delay: i * 0.15 }}
             style={{
               position: 'relative',
-              background: 'linear-gradient(145deg, rgba(10,25,35,0.9) 0%, rgba(5,15,25,0.95) 100%)',
-              backdropFilter: 'blur(15px)',
-              borderRadius: '20px',
-              padding: '45px',
-              border: '1px solid rgba(0,255,200,0.1)',
+              background: 'linear-gradient(145deg, rgba(10,25,35,0.8) 0%, rgba(5,15,25,0.9) 100%)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '30px',
+              padding: '50px 40px',
+              border: '1px solid rgba(0,255,200,0.08)',
               overflow: 'hidden',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+              boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
               cursor: 'pointer',
-              transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+              transition: 'all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)'
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-15px) scale(1.02)';
-              e.currentTarget.style.borderColor = 'rgba(0,255,200,0.4)';
-              e.currentTarget.style.boxShadow = '0 30px 80px rgba(0,255,200,0.15)';
+              e.currentTarget.style.transform = 'translateY(-10px) scale(1.01)';
+              e.currentTarget.style.borderColor = 'rgba(0,255,200,0.3)';
+              e.currentTarget.style.boxShadow = '0 40px 90px rgba(0,255,200,0.1)';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.transform = 'translateY(0) scale(1)';
-              e.currentTarget.style.borderColor = 'rgba(0,255,200,0.1)';
-              e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.8)';
+              e.currentTarget.style.borderColor = 'rgba(0,255,200,0.08)';
+              e.currentTarget.style.boxShadow = '0 30px 60px rgba(0,0,0,0.8)';
             }}
           >
             {/* 🔍 SCANNING OVERLAY (Hover effect) */}
             <div className="artifact-scan" style={{
               position: 'absolute', top: 0, left: 0, width: '100%', height: '2px',
               background: 'linear-gradient(90deg, transparent, #00ffcc, transparent)',
-              opacity: 0, transition: 'opacity 0.3s'
+              opacity: 0.1, transition: 'opacity 0.3s'
             }} />
 
             {/* 🏷️ CLASSIFICATION LABEL */}
             <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              marginBottom: '30px'
+              marginBottom: '35px'
             }}>
               <div style={{
-                fontFamily: 'monospace', fontSize: '10px', color: '#00ffcc', 
+                fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: '#00ffcc', 
                 letterSpacing: '0.4em', background: 'rgba(0,255,200,0.1)', 
-                padding: '6px 12px', borderRadius: '4px'
+                padding: '8px 16px', borderRadius: '4px', textTransform: 'uppercase'
               }}>
-                CLASSIFIED_RELICT_0{i+1}
+                Relict_v0{i+1}
               </div>
               <div style={{
-                fontFamily: 'monospace', fontSize: '10px', color: 'rgba(255,255,255,0.3)',
+                fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: 'rgba(255,255,255,0.2)',
                 letterSpacing: '0.2em'
               }}>
-                DEPTH: 8000M
+                8K_DEPTH
               </div>
             </div>
 
             {/* 🚀 PROJECT NAME */}
             <h3 style={{
-              fontFamily: '"Arial Black", sans-serif',
-              fontSize: '32px', fontWeight: 900, color: '#fff',
-              margin: '0 0 15px 0', letterSpacing: '-0.02em',
-              textShadow: '0 0 20px rgba(0,255,200,0.3)'
+              fontFamily: 'Outfit, sans-serif',
+              fontSize: '36px', fontWeight: 800, color: '#fff',
+              margin: '0 0 15px 0', letterSpacing: '-0.03em',
+              textTransform: 'uppercase',
+              lineHeight: 1.1,
+              textShadow: '0 0 30px rgba(0,255,200,0.2)'
             }}>{proj.name}</h3>
 
             {/* 🛠️ TECH STACK DNA */}
             <div style={{
-              display: 'flex', gap: '10px', marginBottom: '25px', opacity: 0.8
+              display: 'flex', gap: '8px', marginBottom: '30px', flexWrap: 'wrap'
             }}>
               {proj.period.split('|').map(tech => (
                 <span key={tech} style={{
-                  fontFamily: 'monospace', fontSize: '9px', color: '#00ffcc',
-                  border: '1px solid rgba(0,255,200,0.3)', padding: '3px 8px',
-                  borderRadius: '2px'
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: 'rgba(0,255,200,0.6)',
+                  border: '1px solid rgba(0,255,200,0.15)', padding: '4px 10px',
+                  borderRadius: '30px', background: 'rgba(0,255,200,0.03)'
                 }}>{tech.trim()}</span>
               ))}
             </div>
 
             {/* 📄 DESCRIPTION */}
             <p style={{
-              fontFamily: 'monospace', fontSize: '14px', lineHeight: 1.8,
-              color: 'rgba(200,240,255,0.7)', margin: 0,
-              borderLeft: '1px solid rgba(0,255,200,0.2)', paddingLeft: '20px'
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: 1.7,
+              color: 'rgba(200,230,255,0.6)', margin: 0,
+              maxWidth: '90%'
             }}>
               {proj.description}
             </p>
 
             {/* 🧬 DNA STRIP (Visual Decoration) */}
             <div style={{
-              position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)',
-              display: 'flex', flexDirection: 'column', gap: '5px', opacity: 0.1
+              position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
+              display: 'flex', flexDirection: 'column', gap: '8px', opacity: 0.1
             }}>
-              {[...Array(8)].map((_, j) => (
+              {[...Array(12)].map((_, j) => (
                 <div key={j} style={{
-                  width: '4px', height: '4px', background: '#00ffcc', borderRadius: '50%'
+                  width: '3px', height: '3px', background: '#00ffcc', borderRadius: '50%'
                 }} />
               ))}
             </div>
 
             {/* 🔘 MISSION ACCESS BUTTON */}
             <div style={{
-              marginTop: '40px', paddingTop: '20px', borderTop: '1px solid rgba(0,255,200,0.05)',
-              display: 'flex', alignItems: 'center', gap: '12px',
-              fontFamily: 'monospace', fontSize: '11px', color: '#00ffcc',
-              letterSpacing: '0.2em', fontWeight: 900
+              marginTop: '45px', paddingTop: '25px', borderTop: '1px solid rgba(255,255,255,0.03)',
+              display: 'flex', alignItems: 'center', gap: '15px',
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#00ffcc',
+              letterSpacing: '0.3em', fontWeight: 700, opacity: 0.8
             }}>
-              [ INITIALIZE_MISSION_LOG ] 
-              <span style={{ fontSize: '18px', animation: 'arrowMove 1s infinite alternate' }}>→</span>
+              [ INITIALIZE_LOG ] 
+              <span style={{ fontSize: '16px', animation: 'arrowMove 1s infinite alternate' }}>→</span>
             </div>
           </motion.div>
         ))}

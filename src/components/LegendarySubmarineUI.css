@@ -3,14 +3,15 @@
 .legend-sub-root {
   position: relative;
   width: 100%;
-  max-width: 850px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 40px 30px;
-  background: transparent;
+  padding: 60px 40px;
+  background: rgba(0, 5, 10, 0.4);
+  backdrop-filter: blur(10px);
   overflow: hidden;
-  border-radius: 30px;
-  border: 1px solid rgba(0, 255, 200, 0.08);
-  box-shadow: none;
+  border-radius: 40px;
+  border: 1px solid rgba(0, 255, 200, 0.05);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
 }
 
 @media (max-width: 768px) {
@@ -103,26 +104,28 @@
 
 /* ⚡ LEGENDARY TYPOGRAPHY */
 .legend-title {
-  font-family: '"Arial Black", sans-serif';
-  font-size: clamp(42px, 7vw, 90px);
-  font-weight: 900;
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(42px, 8vw, 100px);
+  font-weight: 800;
   font-style: italic;
-  background: linear-gradient(to bottom, #fff, #00ffcc);
+  background: linear-gradient(to bottom, #fff 40%, #00ffcc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
   margin: 0;
-  filter: drop-shadow(0 0 20px rgba(0,255,200,0.5));
+  filter: drop-shadow(0 0 30px rgba(0,255,200,0.4));
+  text-transform: uppercase;
 }
 
 .legend-subtitle {
-  font-family: 'monospace';
-  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
   color: #00ffcc;
-  letter-spacing: 0.5em;
+  letter-spacing: 0.6em;
   text-transform: uppercase;
-  margin-bottom: 40px;
-  opacity: 0.8;
+  margin-bottom: 20px;
+  opacity: 0.6;
 }
 
 /* 🔋 REACTOR NODES */
