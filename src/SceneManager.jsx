@@ -20,6 +20,9 @@ import FishSystem from './components/FishSystem';
 import MantaRay from './components/MantaRay';
 import ProjectPanels from './components/ProjectPanels';
 import CurrentStreams from './components/CurrentStreams';
+import BubbleVents from './components/BubbleVents';
+import Sky from './components/Sky';
+import CausticsLayer from './components/CausticsLayer';
 
 
 
@@ -52,9 +55,9 @@ const SceneManager = ({ setHoveredSkill }) => {
     const renderPass = new RenderPass(scene, camera);
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(size.width, size.height),
-      1.5, // intensity
-      0.4, // radius
-      0.85 // threshold
+      1.2, // intensity
+      0.6, // radius
+      0.95 // threshold - only very bright things glow
     );
     
     const comp = new EffectComposer(gl);
@@ -80,13 +83,23 @@ const SceneManager = ({ setHoveredSkill }) => {
       composer.current.render();
     }
 
-    // Physical Descent: Move the entire scene upward as we scroll
-    // The SeaFloor is at y=-12, so moving the group up by 12-15 units 
-    // will bring the camera to the seabed.
-    if (sceneGraphRef.current) {
-      // Descent from surface (y=0) to abyss (y=11.8)
-      sceneGraphRef.current.position.y = scroll.progress.current * 11.8;
-    }
+    // 2. Dynamic Fog & Background
+    const fogColor = new THREE.Color('#010b14').lerp(new THREE.Color('#000000'), s);
+    state.scene.fog.color.copy(fogColor);
+    state.scene.fog.near = THREE.MathUtils.lerp(5, 2, s);
+    state.scene.fog.far = THREE.MathUtils.lerp(45, 25, s);
+    state.scene.background.copy(fogColor);
+
+    // Camera descends from y=12 (above surface) to y=-12 (seabed) as user scrolls
+    // Adjusted path to ensure sun and monitors are visible
+    const targetY = 12 - (s * 24); 
+    const targetZ = 12 + (s * 8); // Pull back slightly as we descend for wider view of panels
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, 0.05);
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.05);
+    
+    // Tilt: Start looking at horizon/sky, then tilt down into water, then look at panels
+    const targetPitch = -Math.PI / 4 + (s * Math.PI / 3); 
+    camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetPitch, 0.05);
 
     // Apply parallax offsets with device-specific multiplier
     const m = profile.parallaxMultiplier;
@@ -124,33 +137,18 @@ const SceneManager = ({ setHoveredSkill }) => {
   return (
     <>
       <MemoryMonitor />
-      <color attach="background" args={['#010b14']} />
-      <fog attach="fog" args={['#010b14', 10, 50]} />
-      
-      <PerspectiveCamera 
-        makeDefault 
-        fov={60} 
-        near={0.1} 
-        far={1000} 
-        position={[0, 0, 20]} 
-      />
-      
-      <OrbitControls 
-        enableDamping 
-        dampingFactor={0.05} 
-        maxPolarAngle={Math.PI / 1.8} // Prevents looking too far beneath the seabed/horizon
-        minDistance={10}
-        maxDistance={40}
-        enablePan={false} // Disable panning to keep the focus on the descent
-      />
+      <fog attach="fog" args={['#010b14', 5, 45]} />
       
       <Lights />
       <VolumetricLighting />
       
       <group name="SceneGraph" ref={sceneGraphRef}>
+        <Sky />
         <OceanBackground />
+        <CausticsLayer />
         <MarineSnow count={profile.marineSnowCount} />
         <CurrentStreams />
+        <BubbleVents />
         <FoodSystem foodRef={foodRef} />
         <group position={[0, -3, 0]}>
           <JellyfishGroup />

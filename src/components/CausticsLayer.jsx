@@ -1,72 +1,100 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import disposalManager from '../utils/DisposalManager';
-import useVisibility from '../hooks/useVisibility';
 
+/**
+ * LEGENDARY CAUSTICS SHADER
+ * High-fidelity light webbing with chromatic aberration and depth-aware intensity.
+ */
 const Caustics = () => {
   const meshRef = useRef();
   
   const material = useMemo(() => disposalManager.track(new THREE.ShaderMaterial({
     transparent: true,
     blending: THREE.AdditiveBlending,
+    depthWrite: false,
     uniforms: {
       uTime: { value: 0 },
-      uColor: { value: new THREE.Color('#22d3ee') }
+      uColor: { value: new THREE.Color('#22d3ee') },
+      uBrightness: { value: 0.8 }
     },
     vertexShader: `
       varying vec2 vUv;
+      varying vec3 vWorldPosition;
       void main() {
         vUv = uv;
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        vWorldPosition = worldPosition.xyz;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
     fragmentShader: `
       varying vec2 vUv;
+      varying vec3 vWorldPosition;
       uniform float uTime;
       uniform vec3 uColor;
+      uniform float uBrightness;
+
+      // High-performance Voronoi for light webbing
+      vec2 hash(vec2 p) {
+        p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+        return fract(sin(p) * 43758.5453123);
+      }
+
+      float voronoi(vec2 x, float time) {
+        vec2 n = floor(x);
+        vec2 f = fract(x);
+        float m = 1.0;
+        for (int j = -1; j <= 1; j++) {
+          for (int i = -1; i <= 1; i++) {
+            vec2 g = vec2(float(i), float(j));
+            vec2 o = hash(n + g);
+            o = 0.5 + 0.5 * sin(time + 6.2831 * o);
+            vec2 r = g + o - f;
+            float d = dot(r, r);
+            if (d < m) m = d;
+          }
+        }
+        return sqrt(m);
+      }
 
       void main() {
-        vec2 p = vUv * 10.0;
-        vec2 i = vec2(p);
-        float c = 1.0;
-        float inten = 0.05;
-
-        for (int n = 0; n < 5; n++) {
-          float t = uTime * (1.0 - (3.5 / float(n + 1)));
-          i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
-          c += 1.0 / length(vec2(p.x / (sin(i.x + t) / inten), p.y / (cos(i.y + t) / inten)));
-        }
-
-        c /= 5.0;
-        c = 1.17 - pow(c, 1.4);
-        vec3 color = vec3(pow(abs(c), 8.0));
-        color = clamp(color + uColor * 0.2, 0.0, 1.0);
-
-        gl_FragColor = vec4(color, color.r * 0.3);
+        vec2 uv = vUv * 15.0;
+        float t = uTime * 0.8;
+        
+        // Dual-layer caustic interference
+        float v1 = voronoi(uv + t * 0.1, t);
+        float v2 = voronoi(uv * 1.5 - t * 0.15, t * 1.2);
+        
+        // Chromatic fringing (Legendary look)
+        float r = pow(1.0 - min(v1, v2), 12.0);
+        float g = pow(1.0 - min(v1 * 1.02, v2 * 0.98), 12.0);
+        float b = pow(1.0 - min(v1 * 0.98, v2 * 1.02), 12.0);
+        
+        vec3 caustics = vec3(r, g, b) * uBrightness;
+        
+        // Atmospheric falloff
+        float edgeFade = smoothstep(0.5, 0.0, length(vUv - 0.5));
+        float depthFade = smoothstep(-20.0, 5.0, vWorldPosition.y);
+        
+        gl_FragColor = vec4(caustics * uColor, r * edgeFade * depthFade * 0.6);
       }
     `
   })), []);
 
-  const { invalidate } = useThree();
-  const isVisible = useVisibility(meshRef);
-  
   useFrame((state) => {
-    if (!isVisible) return;
-    material.uniforms.uTime.value = state.clock.getElapsedTime();
-    invalidate();
+    if (meshRef.current) {
+      meshRef.current.material.uniforms.uTime.value = state.clock.getElapsedTime();
+    }
   });
-
-  useEffect(() => {
-    return () => material.dispose();
-  }, [material]);
 
   return (
     <mesh 
       ref={meshRef} 
       rotation={[-Math.PI / 2, 0, 0]} 
       position={[0, -2, 0]} 
-      scale={100}
+      scale={120}
     >
       <planeGeometry args={[1, 1]} />
       <primitive object={material} attach="material" />
@@ -74,83 +102,60 @@ const Caustics = () => {
   );
 };
 
+/**
+ * TEXTURED LIGHT SHAFTS (God Rays)
+ * More volumetric and textured than basic points.
+ */
 const LightShafts = () => {
-  const count = 300;
-  const geometryRef = useRef();
-  const positions = useMemo(() => new Float32Array(count * 3), [count]);
-  const velocities = useMemo(() => new Float32Array(count), [count]);
-
-  // Initial positions
-  useMemo(() => {
+  const groupRef = useRef();
+  const count = 12;
+  
+  const shafts = useMemo(() => {
+    const items = [];
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 40;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 40;
-      velocities[i] = 0.01 + Math.random() * 0.02;
+      items.push({
+        pos: [(Math.random() - 0.5) * 50, 10, (Math.random() - 0.5) * 50],
+        rot: [Math.random() * 0.5, 0, Math.random() * 0.5],
+        scale: [1 + Math.random() * 3, 40 + Math.random() * 20, 1],
+        opacity: 0.05 + Math.random() * 0.1,
+        speed: 0.1 + Math.random() * 0.2
+      });
     }
-  }, [count, positions, velocities]);
-
-  const { invalidate } = useThree();
-  const pointsRef = useRef();
-  const isVisible = useVisibility(pointsRef);
-
-  useFrame((state) => {
-    if (!isVisible || !geometryRef.current) return;
-    
-    const time = state.clock.getElapsedTime();
-    const attr = geometryRef.current.attributes.position;
-    
-    for (let i = 0; i < count; i++) {
-      // Gentle swaying and downward drift
-      const xIdx = i * 3;
-      const yIdx = i * 3 + 1;
-      
-      // Update Y (falling/drifting)
-      positions[yIdx] -= velocities[i];
-      if (positions[yIdx] < -20) positions[yIdx] = 20;
-      
-      // Update X (swaying)
-      positions[xIdx] += Math.sin(time + i) * 0.01;
-      
-      attr.array[xIdx] = positions[xIdx];
-      attr.array[yIdx] = positions[yIdx];
-    }
-    
-    attr.needsUpdate = true;
-    invalidate();
-  });
-
-  useEffect(() => {
-    return () => {
-      if (geometryRef.current) geometryRef.current.dispose();
-    };
+    return items;
   }, []);
 
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (groupRef.current) {
+      groupRef.current.children.forEach((child, i) => {
+        child.rotation.y = t * shafts[i].speed * 0.1;
+        child.position.x += Math.sin(t * 0.5 + i) * 0.01;
+      });
+    }
+  });
+
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry ref={geometryRef}>
-        <bufferAttribute
-          attach="attributes-position"
-          count={count}
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.15}
-        color="#22d3ee"
-        transparent
-        opacity={0.4}
-        blending={THREE.AdditiveBlending}
-        sizeAttenuation={true}
-      />
-    </points>
+    <group ref={groupRef}>
+      {shafts.map((s, i) => (
+        <mesh key={i} position={s.pos} rotation={s.rot} scale={s.scale}>
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial 
+            color="#22d3ee" 
+            transparent 
+            opacity={s.opacity} 
+            blending={THREE.AdditiveBlending} 
+            depthWrite={false}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      ))}
+    </group>
   );
 };
 
 const CausticsLayer = () => {
   return (
-    <group name="CausticsLayer">
+    <group name="LegendaryCaustics">
       <Caustics />
       <LightShafts />
     </group>

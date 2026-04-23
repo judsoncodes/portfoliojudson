@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { AnimatePresence } from 'framer-motion';
 import SceneManager from './SceneManager';
@@ -6,9 +6,27 @@ import LoadingScreen from './components/LoadingScreen';
 import ContentLayer from './components/ContentLayer';
 import OxygenGauge from './components/OxygenGauge';
 import WaveWash from './components/WaveWash';
-import { ScrollProvider } from './context/ScrollContext';
+import DepthNarrative from './components/DepthNarrative';
+import { ScrollProvider, useScroll } from './context/ScrollContext';
 
 import useDeviceProfile from './hooks/useDeviceProfile';
+
+const NarrativeOverlay = () => {
+  const { progress } = useScroll();
+  const [val, setVal] = React.useState(0);
+  
+  useEffect(() => {
+    let frameId;
+    const update = () => {
+      setVal(progress.current);
+      frameId = requestAnimationFrame(update);
+    };
+    update();
+    return () => cancelAnimationFrame(frameId);
+  }, [progress]);
+
+  return <DepthNarrative scrollProgress={val} />;
+};
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +51,16 @@ function App() {
           gl={{ antialias: true, alpha: true }}
           dpr={profile.dpr}
           frameloop="always"
+          camera={{
+            position: [0, 12, 0],
+            rotation: [-Math.PI / 2, 0, 0],
+            fov: 65,
+            near: 0.1,
+            far: 200
+          }}
+          style={{ background: '#00050a' }}
         >
+          <color attach="background" args={['#00050a']} />
           <Suspense fallback={null}>
             <SceneManager setHoveredSkill={setHoveredSkill} />
             {showWaveWash && (
@@ -47,6 +74,7 @@ function App() {
           <>
             <ContentLayer setHoveredSkill={setHoveredSkill} />
             <OxygenGauge />
+            <NarrativeOverlay />
             
             {/* Skill Tooltip Overlay */}
             {hoveredSkill && (

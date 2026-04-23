@@ -4,6 +4,10 @@
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #root {
@@ -52,4 +56,35 @@ body,
   10% { opacity: 0.5; }
   90% { opacity: 0.5; }
   100% { transform: translateY(600px); opacity: 0; }
+}
+
+/* Shared abyssal animations */
+@keyframes abyssalGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(0,255,200,0.4); }
+  50% { text-shadow: 0 0 40px rgba(0,255,200,0.8), 0 0 80px rgba(0,255,200,0.3); }
+}
+@keyframes dataStream {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+@keyframes borderTrace {
+  0% { clip-path: inset(0 100% 100% 0); }
+  25% { clip-path: inset(0 0 100% 0); }
+  50% { clip-path: inset(0 0 0 0); }
+  75% { clip-path: inset(100% 0 0 0); }
+  100% { clip-path: inset(0 100% 100% 0); }
+}
+
+/* Make all section titles glow on hover */
+h1:hover, h2:hover {
+  animation: abyssalGlow 1.5s ease-in-out infinite;
+}
+
+/* Terminal cursor blink */
+.terminal-cursor::after {
+  content: '_';
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
 }

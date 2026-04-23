@@ -13,14 +13,8 @@ const OceanBackground = () => {
   const { invalidate } = useThree();
   const scrollProgress = useScroll();
 
-  // Restore the flat PlaneGeometry for the "Beach/Floor" look
   const geometry = useMemo(() => {
-    try {
-      return disposalManager.track(new THREE.PlaneGeometry(100, 100, 128, 128));
-    } catch (error) {
-      console.error("Error creating Ocean geometry:", error);
-      return disposalManager.track(new THREE.PlaneGeometry(10, 10, 16, 16));
-    }
+    return disposalManager.track(new THREE.SphereGeometry(100, 64, 64));
   }, []);
 
   const uniforms = useMemo(() => ({
@@ -52,8 +46,6 @@ const OceanBackground = () => {
   return (
     <mesh 
       ref={meshRef} 
-      rotation={[-Math.PI / 2, 0, 0]} 
-      position={[0, -5, 0]}
       geometry={geometry}
     >
       <shaderMaterial
@@ -61,7 +53,7 @@ const OceanBackground = () => {
         vertexShader={oceanVert}
         fragmentShader={oceanFrag}
         uniforms={uniforms}
-        side={THREE.DoubleSide}
+        side={THREE.BackSide}
         transparent
       />
     </mesh>

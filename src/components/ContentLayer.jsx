@@ -5,6 +5,11 @@ import { profileData } from '../data';
 import RadarChart from './RadarChart';
 import { getInterpolatedZone } from '../utils/depthZones';
 import SkillCreatures from './SkillCreatures';
+import AboutSection from './AboutSection';
+import RecordsSection from './RecordsSection';
+import SignalSection from './SignalSection';
+import ArtifactsSection from './ArtifactsSection';
+import AnchorReturn from './AnchorReturn';
 
 /**
  * Section Component
@@ -17,11 +22,15 @@ const Section = ({ title, children, delay = 0, transparent = false }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, delay, ease: "easeOut" }}
-      className="min-h-screen w-full flex items-center justify-center p-6 md:p-24"
+      className="min-h-screen w-full flex items-center justify-center p-2 md:p-12 lg:p-24"
     >
       <motion.div 
-        className={`max-w-5xl w-full backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 md:p-16 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative group transition-colors duration-700 pointer-events-auto ${transparent ? 'bg-transparent' : ''}`}
-        style={{ backgroundColor: transparent ? 'transparent' : 'rgba(var(--depth-bg-rgb), 0.6)' }}
+        className={`max-w-4xl w-full border border-cyan-400/5 rounded-2xl md:rounded-[2.5rem] p-6 md:p-10 overflow-hidden relative group transition-colors duration-700 pointer-events-auto ${transparent ? 'bg-transparent' : ''}`}
+        style={{ 
+          backgroundColor: 'transparent',
+          border: '1px solid rgba(0, 255, 200, 0.05)',
+          boxShadow: 'none'
+        }}
         data-sonar-target
       >
         {/* Accent Glow */}
@@ -105,24 +114,13 @@ const ContentLayer = ({ setHoveredSkill }) => {
 
   return (
     <div 
+      id="abyss-scroll-container"
       className="absolute inset-0 overflow-y-auto scroll-smooth pointer-events-none hide-scrollbar select-none z-40"
       onScroll={handleScroll}
     >
       {/* Hero / About */}
-      <Section title="The Descent">
-        <div className="space-y-6">
-          <h3 className="text-2xl font-bold tracking-tight transition-colors" style={{ color: 'var(--depth-accent)' }}>{profileData.title}</h3>
-          <p className="max-w-2xl">{profileData.summary}</p>
-          <div className="pt-8 flex flex-wrap gap-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-widest" style={{ color: 'var(--depth-accent)' }}>
-              <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--depth-accent)' }} />
-              {profileData.education[0].institution}
-            </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/50 uppercase tracking-widest">
-              GPA: {profileData.education[0].gpa}
-            </div>
-          </div>
-        </div>
+      <Section title="" transparent={true}>
+        <AboutSection />
       </Section>
 
       {/* Arsenal Section - Showcasing Skill Creatures */}
@@ -159,105 +157,23 @@ const ContentLayer = ({ setHoveredSkill }) => {
       </Section>
 
       {/* Projects */}
-      <Section title="Artifacts">
-        <motion.div 
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            show: { transition: { staggerChildren: 0.15 } }
-          }}
-          className="grid md:grid-cols-2 gap-8"
-        >
-          {profileData.projects.map((proj) => (
-            <motion.div 
-              key={proj.name}
-              variants={{
-                hidden: { opacity: 0, scale: 0.95 },
-                show: { opacity: 1, scale: 1 }
-              }}
-              className="p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group flex flex-col justify-between h-full"
-              style={{ borderTop: '1px solid var(--depth-accent)' }}
-            >
-              <div>
-                <div className="text-[10px] font-mono mb-4 uppercase tracking-[0.3em]" style={{ color: 'var(--depth-accent)' }}>{proj.period}</div>
-                <h3 className="text-3xl font-bold text-white mb-4 group-hover:text-cyan-300 transition-colors tracking-tight">{proj.name}</h3>
-                <p className="text-base text-white/50 leading-relaxed">{proj.description}</p>
-              </div>
-              <div className="mt-8 flex items-center gap-2 text-xs font-bold uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-all" style={{ color: 'var(--depth-accent)' }}>
-                Access Mission Log <span className="text-lg">→</span>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+      <Section title="" transparent={true}>
+        <ArtifactsSection projects={profileData.projects} />
       </Section>
 
       {/* Achievements / Internships */}
-      <Section title="Records">
-        <div className="grid md:grid-cols-2 gap-12">
-          <div className="space-y-6">
-            <h4 className="font-mono text-sm tracking-[0.3em] uppercase mb-4 opacity-80" style={{ color: 'var(--depth-accent)' }}>Achievements</h4>
-            <ul className="space-y-4">
-              {profileData.achievements.map((ach, i) => (
-                <li key={i} className="flex gap-4 text-sm text-white/70">
-                  <span className="font-bold" style={{ color: 'var(--depth-accent)' }}>#0{i+1}</span>
-                  {ach}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="space-y-6">
-            <h4 className="font-mono text-sm tracking-[0.3em] uppercase mb-4 opacity-80" style={{ color: 'var(--depth-accent)' }}>Deployments</h4>
-            <ul className="space-y-4">
-              {profileData.internships.map((int, i) => (
-                <li key={i} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--depth-accent)' }} />
-                  <span className="text-sm text-white/80">{int}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+      <Section title="" transparent={true}>
+        <RecordsSection />
       </Section>
 
       {/* Contact */}
-      <Section title="Signal">
-        <div className="flex flex-col items-center text-center space-y-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-3xl">
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] text-white/30 uppercase tracking-[0.3em] mb-2">Location</span>
-              <span className="text-white font-mono">{profileData.contact.location}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] text-white/30 uppercase tracking-[0.3em] mb-2">Matrix</span>
-              <span className="text-white font-mono">{profileData.contact.email}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] text-white/30 uppercase tracking-[0.3em] mb-2">Link</span>
-              <span className="text-white font-mono">{profileData.contact.github}</span>
-            </div>
-          </div>
-          <div className="flex flex-wrap justify-center gap-6 pt-4">
-            <a 
-              href={`mailto:${profileData.contact.email}`} 
-              className="px-12 py-6 text-white rounded-2xl font-black transition-all transform hover:-translate-y-2 shadow-2xl uppercase tracking-widest"
-              style={{ 
-                backgroundColor: 'var(--depth-accent)',
-                boxShadow: '0 10px 40px var(--depth-accent-glow)'
-              }}
-            >
-              Initiate Uplink
-            </a>
-          </div>
-        </div>
+      <Section title="" transparent={true}>
+        <SignalSection />
       </Section>
 
-      {/* Footer Space */}
-      <div className="h-[30vh] flex items-end justify-center pb-20">
-        <div className="text-white/10 text-[9px] font-mono uppercase tracking-[1.5em]">
-          SYSTEM ONLINE // {profileData.name} // 2026
-        </div>
+      {/* Footer Return - The Anchor */}
+      <div style={{ pointerEvents: 'auto' }}>
+        <AnchorReturn />
       </div>
       
       <style>{`

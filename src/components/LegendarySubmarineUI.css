@@ -1,0 +1,248 @@
+/* 🔱 LEGENDARY LEVIATHAN-CLASS SUBMARINE UI */
+
+.legend-sub-root {
+  position: relative;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 40px 30px;
+  background: transparent;
+  overflow: hidden;
+  border-radius: 30px;
+  border: 1px solid rgba(0, 255, 200, 0.08);
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .legend-sub-root {
+    padding: 30px 10px;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    border-top: 1px solid rgba(0, 255, 200, 0.2);
+    border-bottom: 1px solid rgba(0, 255, 200, 0.2);
+  }
+}
+
+/* 🐉 LEVIATHAN ALLOY HULL */
+.hull-texture {
+  display: none;
+}
+
+/* 🌀 ENERGY VEINS (Glowing paths) */
+.energy-vein {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+  height: 1px;
+  width: 100%;
+  opacity: 0.3;
+  filter: blur(1px);
+  animation: flowEnergy 4s infinite linear;
+}
+
+@keyframes flowEnergy {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 🔭 THE ABYSSAL PERISCOPE (Enhanced Porthole) */
+.periscope {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #001a22 0%, #000 70%);
+  border-radius: 50%;
+  border: 2px solid rgba(0,255,200,0.3);
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: -20px 20px 50px rgba(0,0,0,0.8);
+}
+
+@media (max-width: 768px) {
+  .periscope {
+    display: none;
+  }
+}
+
+/* 💎 CRYSTAL CORE (Holographic Card) */
+.crystal-card {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  border: 1px solid rgba(0,255,200,0.1);
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .crystal-card {
+    padding: 25px 15px;
+    border-radius: 15px;
+  }
+}
+
+.crystal-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  transform: skewX(-25deg);
+  animation: shine 6s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* ⚡ LEGENDARY TYPOGRAPHY */
+.legend-title {
+  font-family: '"Arial Black", sans-serif';
+  font-size: clamp(42px, 7vw, 90px);
+  font-weight: 900;
+  font-style: italic;
+  background: linear-gradient(to bottom, #fff, #00ffcc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.05em;
+  margin: 0;
+  filter: drop-shadow(0 0 20px rgba(0,255,200,0.5));
+}
+
+.legend-subtitle {
+  font-family: 'monospace';
+  font-size: 12px;
+  color: #00ffcc;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  opacity: 0.8;
+}
+
+/* 🔋 REACTOR NODES */
+.reactor-node {
+  padding: 25px;
+  background: rgba(0,255,200,0.05);
+  border: 1px solid rgba(0,255,200,0.2);
+  text-align: center;
+  min-width: 130px;
+  flex: 1;
+  position: relative;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .reactor-node {
+    min-width: 100%;
+  }
+}
+
+.reactor-node:hover {
+  background: rgba(0,255,200,0.1);
+  border-color: #00ffcc;
+  transform: translateY(-10px);
+  box-shadow: 0 0 30px rgba(0,255,200,0.4);
+}
+
+.reactor-node::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 4px;
+  background: #00ffcc;
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.reactor-node:hover::after {
+  transform: scaleX(1);
+}
+
+/* 🚨 WARNING SYSTEM */
+.warning-pulse {
+  width: 12px; height: 12px;
+  background: #00ffcc;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #00ffcc;
+  animation: ping 2s infinite;
+}
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(3); opacity: 0; }
+}
+
+/* ☢️ X-RAY SCANNING BEAM */
+.xray-scan {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 20%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(0, 255, 200, 0.1) 45%, 
+    rgba(0, 255, 200, 0.4) 50%, 
+    rgba(0, 255, 200, 0.1) 55%, 
+    transparent
+  );
+  filter: blur(10px);
+  z-index: 5;
+  pointer-events: none;
+  animation: xrayMove 8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes xrayMove {
+  0% { left: -100%; }
+  30% { left: 150%; }
+  100% { left: 150%; }
+}
+
+/* 📻 RADIO WAVEFORM */
+.radio-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 20px;
+  opacity: 0.6;
+}
+
+.wave-bar {
+  width: 2px;
+  background: #00ffcc;
+  animation: wavePulse 1s infinite ease-in-out;
+}
+
+@keyframes wavePulse {
+  0%, 100% { height: 4px; opacity: 0.4; }
+  50% { height: 18px; opacity: 1; }
+}
+
+/* ⚡ INTERFERENCE GLITCH */
+.interference {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,200,0.02) 3px);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+@keyframes rotateSonar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.periscope-scan {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, transparent, rgba(0,255,200,0.5) 10deg, transparent 40deg);
+  animation: rotateSonar 4s linear infinite;
+  transform-origin: center;
+}

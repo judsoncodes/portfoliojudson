@@ -1,0 +1,76 @@
+.depth-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* MAIN CAPTION */
+.depth-caption {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  font-family: 'Courier New', monospace;
+  font-size: clamp(11px, 1.8vw, 16px);
+  letter-spacing: 0.22em;
+  color: rgba(180, 220, 255, 0.9);
+  text-align: center;
+  text-transform: uppercase;
+
+  padding: 10px 24px;
+
+  border-left: 1px solid rgba(0,255,200,0.3);
+  border-right: 1px solid rgba(0,255,200,0.3);
+
+  backdrop-filter: blur(6px);
+
+  /* 🌊 scanlines */
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+
+  /* ✨ subtle breathing animation */
+  animation: pulseDepth 4s ease-in-out infinite;
+}
+
+/* 👻 glitch ghost layer */
+.ghost-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  color: rgba(0, 255, 200, 0.2);
+  transform: translate(1px, -1px);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ✨ cursor */
+.cursor {
+  animation: blink 0.8s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 🌊 breathing glow */
+@keyframes pulseDepth {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.02);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}

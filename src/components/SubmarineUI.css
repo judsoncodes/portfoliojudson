@@ -1,0 +1,171 @@
+/* 🚢 SUBMARINE INTERIOR UI SYSTEM */
+
+.submarine-root {
+  position: relative;
+  width: 100%;
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  background: #0a0c10;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 4px solid #1a1e24;
+  box-shadow: 
+    0 0 0 2px #000,
+    inset 0 0 100px rgba(0,0,0,0.8);
+}
+
+/* 🔩 METAL PANELING & RIVETS */
+.submarine-paneling {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(90deg, #161a1f 1px, transparent 1px),
+    linear-gradient(180deg, #161a1f 1px, transparent 1px);
+  background-size: 100px 100px;
+  opacity: 0.3;
+}
+
+.rivet {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at 30% 30%, #444, #111);
+  border-radius: 50%;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* 🖼️ PORTHOLE VIEWPORT */
+.porthole {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 12px solid #1a1e24;
+  background: #000;
+  overflow: hidden;
+  box-shadow: 
+    0 0 20px rgba(0,0,0,0.5),
+    inset 0 0 40px rgba(0,255,200,0.2);
+}
+
+.porthole-glass {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,255,200,0.1), transparent);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+}
+
+.porthole-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotateSonar 10s linear infinite;
+}
+
+@keyframes rotateSonar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 📟 HUD TEXT & DISPLAYS */
+.sub-hud-text {
+  font-family: 'Courier New', monospace;
+  color: #00ffcc;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 8px rgba(0,255,200,0.5);
+}
+
+.sub-title {
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 900;
+  margin: 10px 0;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+/* 📏 GAUGES & METERS */
+.gauge-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.gauge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 4px solid #1a1e24;
+  background: #050505;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-needle {
+  position: absolute;
+  width: 2px;
+  height: 25px;
+  background: #ff4400;
+  bottom: 50%;
+  transform-origin: bottom center;
+  animation: needleJitter 2s infinite ease-in-out;
+}
+
+@keyframes needleJitter {
+  0%, 100% { transform: rotate(30deg); }
+  50% { transform: rotate(45deg); }
+}
+
+/* 🔴 WARNING LIGHTS */
+.warning-light {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff0000;
+  box-shadow: 0 0 10px #ff0000;
+  animation: blinkRed 1s infinite;
+}
+
+@keyframes blinkRed {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.3; filter: brightness(0.5); }
+}
+
+/* 📋 DETAIL CARD (RIVETED) */
+.sub-card {
+  position: relative;
+  background: rgba(15, 20, 25, 0.95);
+  border: 2px solid #2a3038;
+  padding: 40px;
+  margin-top: 20px;
+  box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
+}
+
+/* 🛠️ STAT NODES (INTERIOR STYLE) */
+.sub-stat {
+  padding: 15px;
+  background: #0f1419;
+  border: 1px solid #2a3038;
+  text-align: center;
+  min-width: 100px;
+}
+
+.sub-stat-val {
+  font-size: 24px;
+  font-weight: 900;
+  color: #00ffcc;
+}
+
+.sub-stat-label {
+  font-size: 9px;
+  color: #555;
+  margin-top: 4px;
+}

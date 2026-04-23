@@ -82,7 +82,7 @@ const VolumetricRayMaterial = {
       
       // 4. Depth Absorption & Falloff
       float depthFalloff = exp(-vWorldPosition.y * -0.05 * 1.2); 
-      float scrollFalloff = smoothstep(1.0, 0.3, uDepthProgress);
+      float scrollFalloff = smoothstep(1.0, 0.6, uDepthProgress);
       
       // 5. Color Absorption (Lerp to Deep Blue)
       vec3 shallowColor = uColor;

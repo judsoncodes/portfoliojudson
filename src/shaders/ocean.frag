@@ -1,7 +1,7 @@
 precision highp float;
 
 varying vec2 vUv;
-varying float vElevation;
+varying vec3 vPosition;
 
 uniform float uTime;
 uniform float uDepthProgress;
@@ -14,7 +14,6 @@ uniform vec3 uTwilightBottom;
 uniform vec3 uAbyssalTop;
 uniform vec3 uAbyssalBottom;
 
-// High-end liquid caustic function
 float getCaustics(vec2 uv, float t) {
     vec2 p = mod(uv * 6.2831, 6.2831) - 250.0;
     vec2 i = vec2(p);
@@ -33,11 +32,11 @@ float getCaustics(vec2 uv, float t) {
 }
 
 void main() {
-    float wave = sin(vUv.x * 5.0 + uTime) * 0.5 + 0.5;
-    float elevationFactor = vElevation * 1.5 + 0.5;
+    // Normalize position Y for gradient (-100 to 100 on sphere)
+    float normalizedY = (vPosition.y + 100.0) / 200.0;
     
     // Liquid caustics shimmer
-    float caustics = getCaustics(vUv * 2.0, uTime * 0.5);
+    float caustics = getCaustics(vUv * 4.0, uTime * 0.3);
     
     // Zone Color Computation
     vec3 zoneTop;
@@ -56,11 +55,11 @@ void main() {
         zoneBottom = uAbyssalBottom;
     }
 
-    vec3 color = mix(zoneBottom, zoneTop, clamp(elevationFactor + wave * 0.2 + caustics, 0.0, 1.0));
+    vec3 color = mix(zoneBottom, zoneTop, clamp(normalizedY + caustics * 0.2, 0.0, 1.0));
     
-    // Add subtle god-ray stripes (fade out as we go deeper)
-    float rays = sin(vUv.x * 10.0 + uTime * 0.2) * 0.05 * (1.0 - vUv.y);
+    // Subtle god-ray stripes (fade out as we go deeper)
+    float rays = sin(vUv.x * 20.0 + uTime * 0.1) * 0.03 * normalizedY;
     color += rays * (1.0 - uDepthProgress);
 
-    gl_FragColor = vec4(color, 0.9);
+    gl_FragColor = vec4(color, 1.0);
 }
