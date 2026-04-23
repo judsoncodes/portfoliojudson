@@ -81,8 +81,8 @@
 
 @media (max-width: 768px) {
   .crystal-card {
-    padding: 25px 15px;
-    border-radius: 15px;
+    padding: 15px 12px;
+    border-radius: 12px;
   }
 }
 
@@ -105,16 +105,16 @@
 /* ⚡ LEGENDARY TYPOGRAPHY */
 .legend-title {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(42px, 8vw, 100px);
+  font-size: clamp(24px, 9vw, 100px);
   font-weight: 800;
   font-style: italic;
   background: linear-gradient(to bottom, #fff 40%, #00ffcc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.04em;
   line-height: 0.9;
   margin: 0;
-  filter: drop-shadow(0 0 30px rgba(0,255,200,0.4));
+  filter: drop-shadow(0 0 20px rgba(0,255,200,0.3));
   text-transform: uppercase;
 }
 
@@ -130,11 +130,11 @@
 
 /* 🔋 REACTOR NODES */
 .reactor-node {
-  padding: 25px;
+  padding: 15px md:25px;
   background: rgba(0,255,200,0.05);
   border: 1px solid rgba(0,255,200,0.2);
   text-align: center;
-  min-width: 130px;
+  min-width: 80px;
   flex: 1;
   position: relative;
   transition: all 0.3s;
@@ -206,6 +206,13 @@
   0% { left: -100%; }
   30% { left: 150%; }
   100% { left: 150%; }
+}
+
+@media (max-width: 768px) {
+  .xray-scan {
+    animation-duration: 12s; /* Slower/less frequent on mobile */
+    width: 40%;
+  }
 }
 
 /* 📻 RADIO WAVEFORM */

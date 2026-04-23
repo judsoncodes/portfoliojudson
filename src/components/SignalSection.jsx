@@ -51,7 +51,7 @@ export default function SignalSection() {
           </div>
           <h2 style={{
             fontFamily: '"Arial Black", sans-serif',
-            fontSize: 'clamp(38px, 10vw, 110px)',
+            fontSize: 'clamp(32px, 12vw, 110px)',
             fontWeight: 900, fontStyle: 'italic',
             color: '#fff',
             textShadow: '0 0 30px rgba(0,255,200,0.8), 0 0 60px rgba(0,255,200,0.4)',
@@ -105,12 +105,12 @@ export default function SignalSection() {
                     value={form[field]}
                     onChange={e => setForm(f => ({...f, [field]: e.target.value}))}
                     style={{
-                      width: '100%', padding: '16px 16px 14px 75px',
+                      width: '100%', padding: '16px 16px 14px 65px',
                       background: 'rgba(0,255,200,0.02)',
                       border: '1px solid rgba(0,255,200,0.1)',
                       borderBottom: '2px solid rgba(0,255,200,0.3)',
                       color: '#fff',
-                      fontFamily: 'monospace', fontSize: '15px',
+                      fontFamily: 'monospace', fontSize: '14px',
                       outline: 'none',
                       boxSizing: 'border-box',
                       transition: 'all 0.3s',
@@ -132,12 +132,12 @@ export default function SignalSection() {
                 value={form.message}
                 onChange={e => setForm(f => ({...f, message: e.target.value}))}
                 style={{
-                  width: '100%', padding: '16px 16px 14px 90px',
+                  width: '100%', padding: '16px 16px 14px 75px',
                   background: 'rgba(0,255,200,0.02)',
                   border: '1px solid rgba(0,255,200,0.1)',
                   borderBottom: '2px solid rgba(0,255,200,0.3)',
                   color: '#fff',
-                  fontFamily: 'monospace', fontSize: '15px',
+                  fontFamily: 'monospace', fontSize: '14px',
                   outline: 'none', resize: 'none',
                   boxSizing: 'border-box',
                 }}
@@ -151,16 +151,16 @@ export default function SignalSection() {
                 disabled={sending}
                 style={{
                   position: 'relative',
-                  width: 'clamp(250px, 80vw, 320px)', height: '120px',
+                  width: 'clamp(200px, 80vw, 320px)', height: '100px',
                   background: 'none', border: 'none',
                   cursor: sending ? 'wait' : 'pointer',
                   padding: 0,
                   outline: 'none',
                   transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  transform: 'scale(clamp(0.7, 1vw, 1))'
+                  transform: 'scale(0.8) md:scale(1)'
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-10px) rotate(-3deg) scale(1.05)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0) rotate(0deg) scale(clamp(0.7, 1vw, 1))'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0) rotate(0deg) scale(1)'}
               >
                 {/* 🛡️ Caustic Glow under bottle */}
                 <div style={{

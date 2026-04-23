@@ -26,10 +26,10 @@ const useDeviceProfile = () => {
     if (isMobile) {
       return {
         isMobile: true,
-        boidCounts: { fg: 4, mid: 8, bg: 12 },
-        marineSnowCount: 800,
-        parallaxMultiplier: 0.4, // 60% reduction
-        dpr: Math.min(window.devicePixelRatio, 2),
+        boidCounts: { fg: 2, mid: 6, bg: 10 },
+        marineSnowCount: 400,
+        parallaxMultiplier: 0.3, 
+        dpr: 1, // Cap at 1 for mobile performance
         sonarTrigger: 'two-finger-long-press'
       };
     }

@@ -29,19 +29,19 @@ const OxygenGauge = () => {
   const oxygenLevel = 1 - progress; 
 
   return (
-    <div className="fixed right-8 md:right-16 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none select-none z-[60]">
+    <div className="hidden md:flex fixed right-4 md:right-16 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none select-none z-[60] scale-75 md:scale-100">
         
         {/* Depth Label */}
-        <div className="mb-6 flex flex-col items-center">
-          <span className="text-[10px] font-mono tracking-[0.3em] uppercase mb-1 opacity-50" style={{ color: 'var(--depth-accent)' }}>Depth Status</span>
+        <div className="mb-4 md:mb-6 flex flex-col items-center">
+          <span className="text-[8px] md:text-[10px] font-mono tracking-[0.3em] uppercase mb-1 opacity-50" style={{ color: 'var(--depth-accent)' }}>Depth Status</span>
           <div 
-            className="text-2xl font-mono font-bold tabular-nums transition-all duration-500"
+            className="text-lg md:text-2xl font-mono font-bold tabular-nums transition-all duration-500"
             style={{ 
               color: 'var(--depth-accent)',
               textShadow: '0 0 15px var(--depth-accent-glow)'
             }}
           >
-            {Math.round(progress * 10984)}<span className="text-xs ml-1 opacity-50">m</span>
+            {Math.round(progress * 10984)}<span className="text-[10px] ml-1 opacity-50">m</span>
           </div>
         </div>
 
@@ -109,7 +109,7 @@ const OxygenGauge = () => {
         </div>
 
         {/* Bottom Label */}
-        <div className="mt-6 flex flex-col items-center">
+        <div className="mt-6 hidden md:flex flex-col items-center">
           <div className="h-px w-8 mb-2 opacity-30" style={{ backgroundColor: 'var(--depth-accent)' }} />
           <div className="text-[9px] text-white/30 font-mono tracking-[0.5em] [writing-mode:vertical-lr] uppercase h-24">
             Oxygen Reserve

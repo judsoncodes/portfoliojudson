@@ -38,8 +38,8 @@ const CinematicLens = () => {
       <div className="absolute bottom-8 left-8 w-12 h-12 border-b-2 border-l-2 border-cyan-500/20 rounded-bl-xl" />
       <div className="absolute bottom-8 right-8 w-12 h-12 border-b-2 border-r-2 border-cyan-500/20 rounded-br-xl" />
 
-      {/* 📊 SYSTEM DATA: Subtle micro-stats at the bottom */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-12 text-[8px] font-mono tracking-[0.4em] text-cyan-500/30 uppercase">
+      {/* 📊 SYSTEM DATA: Subtle micro-stats at the bottom (Hidden on mobile) */}
+      <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 gap-12 text-[8px] font-mono tracking-[0.4em] text-cyan-500/30 uppercase">
         <span>Press: 109.4 MPa</span>
         <span className="animate-pulse">Status: Live Uplink</span>
         <span>Temp: 2.4°C</span>

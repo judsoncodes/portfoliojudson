@@ -18,8 +18,8 @@ export default function ArtifactsSection({ projects }) {
               position: 'relative',
               background: 'linear-gradient(145deg, rgba(10,25,35,0.8) 0%, rgba(5,15,25,0.9) 100%)',
               backdropFilter: 'blur(20px)',
-              borderRadius: '30px',
-              padding: '50px 40px',
+              borderRadius: '24px',
+              padding: '35px 25px',
               border: '1px solid rgba(0,255,200,0.08)',
               overflow: 'hidden',
               boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
@@ -67,7 +67,7 @@ export default function ArtifactsSection({ projects }) {
             {/* 🚀 PROJECT NAME */}
             <h3 style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '36px', fontWeight: 800, color: '#fff',
+              fontSize: 'clamp(24px, 8vw, 36px)', fontWeight: 800, color: '#fff',
               margin: '0 0 15px 0', letterSpacing: '-0.03em',
               textTransform: 'uppercase',
               lineHeight: 1.1,

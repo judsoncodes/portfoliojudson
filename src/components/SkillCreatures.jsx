@@ -192,9 +192,9 @@ const SkillCreatures = () => {
 
       {/* Adaptive Holographic Glyphs */}
       <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${hoveredSkill ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center p-8 backdrop-blur-3xl rounded-[3rem] border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.5)]">
-          <div className="text-[10px] font-mono tracking-[0.5em] mb-2" style={{ color: hoveredSkill?.color }}>DIMENSIONAL_SCAN_ACTIVE</div>
-          <h2 className="text-6xl font-black italic tracking-tighter mb-4" style={{ color: hoveredSkill?.color }}>{hoveredSkill?.name.toUpperCase()}</h2>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center p-4 md:p-8 backdrop-blur-3xl rounded-[2rem] md:rounded-[3rem] border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.5)] w-[90%] max-w-sm">
+          <div className="text-[8px] md:text-[10px] font-mono tracking-[0.5em] mb-2" style={{ color: hoveredSkill?.color }}>DIMENSIONAL_SCAN_ACTIVE</div>
+          <h2 className="text-3xl md:text-6xl font-black italic tracking-tighter mb-4" style={{ color: hoveredSkill?.color }}>{hoveredSkill?.name.toUpperCase()}</h2>
           <div className="flex flex-col gap-2 font-mono text-[9px] text-white/40 uppercase tracking-widest text-left max-w-xs mx-auto border-t border-white/10 pt-4">
             {hoveredSkill?.logs.map((log, i) => (
               <div key={i} className="flex justify-between gap-8">
@@ -210,8 +210,8 @@ const SkillCreatures = () => {
         </div>
       </div>
 
-      {/* System Status Frame */}
-      <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end pointer-events-none opacity-40">
+      {/* System Status Frame - Hidden on mobile to clear space */}
+      <div className="hidden md:flex absolute bottom-8 left-8 right-8 justify-between items-end pointer-events-none opacity-40">
         <div className="flex flex-col gap-1">
           <div className="text-[9px] font-black tracking-[0.3em] text-cyan-400">HYPERDIMENSIONAL_V3.1</div>
           <div className="text-[8px] font-mono text-white/30 tracking-[0.1em]">SYSTEMS: STABLE // CORE: VIBRANT</div>

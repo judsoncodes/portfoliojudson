@@ -36,7 +36,7 @@ function App() {
   const profile = useDeviceProfile();
 
   return (
-    <div className="w-full h-full bg-black relative touch-none">
+    <div className="w-full h-full bg-black relative">
       <AnimatePresence>
         {isLoading && (
           <LoadingScreen onComplete={() => {
@@ -79,13 +79,13 @@ function App() {
             
             {/* Skill Tooltip Overlay */}
             {hoveredSkill && (
-              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50 bg-black/80 backdrop-blur-md border border-white/20 p-6 rounded-2xl text-center shadow-2xl scale-110">
-                <h3 className="text-3xl font-black mb-2" style={{ color: hoveredSkill.color }}>{hoveredSkill.name.toUpperCase()}</h3>
-                <div className="text-white/60 font-mono text-sm mb-4">PROFICIENCY: {hoveredSkill.level}%</div>
-                <div className="w-48 h-2 bg-white/10 rounded-full overflow-hidden mb-4">
+              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50 bg-black/90 backdrop-blur-xl border border-white/20 p-4 md:p-6 rounded-2xl text-center shadow-2xl scale-90 md:scale-110 w-[80%] max-w-[300px]">
+                <h3 className="text-2xl md:text-3xl font-black mb-2" style={{ color: hoveredSkill.color }}>{hoveredSkill.name.toUpperCase()}</h3>
+                <div className="text-white/60 font-mono text-[10px] md:text-sm mb-4">PROFICIENCY: {hoveredSkill.level}%</div>
+                <div className="w-full h-1.5 md:h-2 bg-white/10 rounded-full overflow-hidden mb-4">
                   <div className="h-full" style={{ width: `${hoveredSkill.level}%`, backgroundColor: hoveredSkill.color }} />
                 </div>
-                <div className="text-white/80 text-xs uppercase tracking-widest">{hoveredSkill.yearsExp} YEARS OF EXPERIENCE</div>
+                <div className="text-white/80 text-[8px] md:text-xs uppercase tracking-widest">{hoveredSkill.yearsExp} YEARS OF EXPERIENCE</div>
               </div>
             )}
           </>
@@ -94,9 +94,9 @@ function App() {
       
       {/* UI Overlay */}
       {!isLoading && (
-        <div className="absolute top-10 left-10 text-white pointer-events-none mix-blend-difference z-[70]">
-          <h1 className="text-4xl font-black tracking-tighter uppercase italic font-outfit">JUDSON J</h1>
-          <p className="text-[10px] uppercase tracking-[0.6em] opacity-60 font-mono">Abyssal Architect // Fullstack Engineer</p>
+        <div className="absolute top-4 left-4 md:fixed md:top-10 md:left-10 text-white pointer-events-none mix-blend-difference z-[70]">
+          <h1 className="text-xl md:text-4xl font-black tracking-tighter uppercase italic font-outfit">JUDSON J</h1>
+          <p className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.6em] opacity-60 font-mono">Abyssal Architect // Fullstack Engineer</p>
         </div>
       )}
       <CinematicLens />

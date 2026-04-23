@@ -22,7 +22,7 @@ const Section = ({ title, children, delay = 0, transparent = false }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, delay, ease: "easeOut" }}
-      className="min-h-screen w-full flex items-center justify-center p-2 md:p-12 lg:p-24"
+      className="min-h-screen w-full flex items-center justify-center p-4 md:p-12 lg:p-24"
     >
       <motion.div 
         className={`max-w-4xl w-full border border-cyan-400/5 rounded-2xl md:rounded-[2.5rem] p-6 md:p-10 overflow-hidden relative group transition-colors duration-700 pointer-events-auto ${transparent ? 'bg-transparent' : ''}`}
@@ -41,16 +41,16 @@ const Section = ({ title, children, delay = 0, transparent = false }) => {
         
         <div className="relative z-10">
           <h2 
-            className="text-4xl md:text-6xl font-black mb-8 tracking-tighter uppercase italic flex items-center gap-4 transition-all duration-500"
+            className="text-3xl md:text-6xl font-black mb-6 md:mb-8 tracking-tighter uppercase italic flex items-center gap-4 transition-all duration-500"
             style={{ 
               color: 'var(--depth-accent)',
               textShadow: '0 0 20px var(--depth-accent-glow)'
             }}
           >
-            <span className="w-8 h-px bg-current opacity-50" />
+            <span className="w-6 md:w-8 h-px bg-current opacity-50" />
             {title}
           </h2>
-          <div className="text-white/70 text-lg md:text-xl leading-relaxed font-light">
+          <div className="text-white/70 text-sm md:text-xl leading-relaxed font-light">
             {children}
           </div>
         </div>
@@ -115,37 +115,39 @@ const ContentLayer = ({ setHoveredSkill }) => {
   return (
     <div 
       id="abyss-scroll-container"
-      className="absolute inset-0 overflow-y-auto scroll-smooth pointer-events-none hide-scrollbar select-none z-40"
+      className="absolute inset-0 overflow-y-auto scroll-smooth pointer-events-auto hide-scrollbar select-none z-40"
       onScroll={handleScroll}
     >
       {/* Hero / About */}
-      <Section title="" transparent={true}>
-        <AboutSection />
-      </Section>
+      <div className="pt-40 md:pt-0">
+        <Section title="" transparent={true}>
+          <AboutSection />
+        </Section>
+      </div>
 
       {/* Arsenal Section - Showcasing Skill Creatures */}
       <Section title="Arsenal" transparent>
         <div className="flex flex-col items-center gap-12">
           {/* Interactive 3D Skill Ecosystem */}
-          <div className="w-full h-[600px] rounded-[3rem] border border-white/10 relative overflow-hidden pointer-events-auto shadow-[0_0_80px_rgba(0,0,0,0.8)]">
+          <div className="w-full h-[350px] md:h-[600px] rounded-2xl md:rounded-[3rem] border border-white/10 relative overflow-hidden pointer-events-auto shadow-[0_0_80px_rgba(0,0,0,0.8)]">
             <SkillCreatures />
             
             {/* Cinematic Scanning Overlay */}
-            <div className="absolute inset-0 pointer-events-none border-[20px] border-black/20" />
+            <div className="absolute inset-0 pointer-events-none border-[10px] md:border-[20px] border-black/20" />
             <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-500/30 blur-sm animate-[scan_4s_linear_infinite]" />
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
           </div>
           
-          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 pointer-events-auto">
+          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 pointer-events-auto">
             {profileData.skills.map((skill) => (
               <div 
                 key={skill.name} 
-                className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-sm"
+                className="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-sm"
                 style={{ borderTop: `2px solid ${skillColors[skill.name] || 'var(--depth-accent)'}` }}
               >
-                <div className="font-bold text-sm mb-1 transition-colors" style={{ color: skillColors[skill.name] || 'var(--depth-accent)' }}>{skill.name}</div>
-                <div className="text-[9px] text-white/40 uppercase tracking-widest mb-1">{skill.level}</div>
-                <div className="text-[10px] text-white/60 leading-tight">{skill.description}</div>
+                <div className="font-bold text-[10px] md:text-sm mb-1 transition-colors" style={{ color: skillColors[skill.name] || 'var(--depth-accent)' }}>{skill.name}</div>
+                <div className="text-[7px] md:text-[9px] text-white/40 uppercase tracking-widest mb-1">{skill.level}</div>
+                <div className="text-[8px] md:text-[10px] text-white/60 leading-tight hidden sm:block">{skill.description}</div>
               </div>
             ))}
           </div>

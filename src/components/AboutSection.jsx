@@ -60,13 +60,13 @@ export default function AboutSection() {
         {/* EPIC NARRATIVE */}
         <p style={{
           fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 'clamp(14px, 4vw, 15px)',
-          lineHeight: '1.8',
+          fontSize: 'clamp(11px, 3.5vw, 14px)',
+          lineHeight: '1.6',
           color: 'rgba(180, 220, 255, 0.8)',
           maxWidth: '650px',
-          margin: '30px 0',
+          margin: '20px 0',
           borderLeft: '2px solid #00ffcc',
-          paddingLeft: '25px',
+          paddingLeft: '15px',
           textShadow: '0 0 20px rgba(0,0,0,1)',
           letterSpacing: '-0.02em'
         }}>

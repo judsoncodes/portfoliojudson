@@ -62,7 +62,10 @@ export default function DepthNarrative({ scrollProgress = 0 }) {
       setVisible(true);
 
       clearTimeout(hideTimer.current);
-      hideTimer.current = setTimeout(() => setVisible(false), 3500);
+      hideTimer.current = setTimeout(() => {
+        setVisible(false);
+        setCurrentText(""); // Reset text to prevent 'stuck' state
+      }, 4000);
     }
   }, [scrollProgress, currentText]);
 

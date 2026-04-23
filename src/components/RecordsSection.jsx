@@ -31,13 +31,14 @@ export default function RecordsSection() {
           opacity: 0.15,
         }} />
         
-        {/* 🧬 DNA strip — bioluminescent nucleotides */}
+        {/* 🧬 DNA strip — bioluminescent nucleotides (Hidden on very small screens to save space) */}
         <div style={{
-          position: 'absolute', left: 'clamp(5px, 2vw, 20px)', top: '80px', bottom: '20px',
+          position: 'absolute', left: '12px', top: '80px', bottom: '20px',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-around',
           width: '4px',
           zIndex: 5,
-          opacity: 0.6
+          opacity: 0.4,
+          visibility: window.innerWidth < 480 ? 'hidden' : 'visible'
         }}>
           {Array.from({length: 18}).map((_, i) => (
             <div key={i} style={{
@@ -51,7 +52,7 @@ export default function RecordsSection() {
         </div>
 
         {/* 📟 VAULT CONTENT */}
-        <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(40px, 8vw, 60px) clamp(15px, 5vw, 40px) 40px clamp(30px, 12vw, 80px)' }}>
+        <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(30px, 6vw, 60px) clamp(10px, 4vw, 40px) 40px clamp(15px, 8vw, 80px)' }}>
           
           <div style={{ marginBottom: '40px' }}>
             <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#00ff8888', letterSpacing: '0.5em', marginBottom: '10px' }}>
