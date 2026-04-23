@@ -47,4 +47,9 @@ body,
   to { background-position: 0 100%; }
 }
 
-
+@keyframes scan {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(600px); opacity: 0; }
+}

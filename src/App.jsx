@@ -13,6 +13,7 @@ import useDeviceProfile from './hooks/useDeviceProfile';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showWaveWash, setShowWaveWash] = useState(false);
+  const [hoveredSkill, setHoveredSkill] = useState(null);
   const profile = useDeviceProfile();
 
   return (
@@ -31,10 +32,10 @@ function App() {
           shadows 
           gl={{ antialias: true, alpha: true }}
           dpr={profile.dpr}
-          frameloop="demand"
+          frameloop="always"
         >
           <Suspense fallback={null}>
-            <SceneManager />
+            <SceneManager setHoveredSkill={setHoveredSkill} />
             {showWaveWash && (
               <WaveWash onComplete={() => setShowWaveWash(false)} />
             )}
@@ -44,8 +45,20 @@ function App() {
         {/* DOM Overlay Layers */}
         {!isLoading && (
           <>
-            <ContentLayer />
+            <ContentLayer setHoveredSkill={setHoveredSkill} />
             <OxygenGauge />
+            
+            {/* Skill Tooltip Overlay */}
+            {hoveredSkill && (
+              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50 bg-black/80 backdrop-blur-md border border-white/20 p-6 rounded-2xl text-center shadow-2xl scale-110">
+                <h3 className="text-3xl font-black mb-2" style={{ color: hoveredSkill.color }}>{hoveredSkill.name.toUpperCase()}</h3>
+                <div className="text-white/60 font-mono text-sm mb-4">PROFICIENCY: {hoveredSkill.level}%</div>
+                <div className="w-48 h-2 bg-white/10 rounded-full overflow-hidden mb-4">
+                  <div className="h-full" style={{ width: `${hoveredSkill.level}%`, backgroundColor: hoveredSkill.color }} />
+                </div>
+                <div className="text-white/80 text-xs uppercase tracking-widest">{hoveredSkill.yearsExp} YEARS OF EXPERIENCE</div>
+              </div>
+            )}
           </>
         )}
       </ScrollProvider>

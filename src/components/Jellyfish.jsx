@@ -129,6 +129,11 @@ const Jellyfish = ({ index, position, colors }) => {
     invalidate();
   });
 
+  // Pre-generate tube geometries to prevent re-creation in the render loop
+  const tentacleGeometries = useMemo(() => {
+    return tentaclesData.map(t => disposalManager.track(new THREE.TubeGeometry(t.curve, 20, 0.02, 8, false)));
+  }, [tentaclesData]);
+
   return (
     <group ref={groupRef} position={position}>
       <mesh ref={bellRef} geometry={bellGeo} material={bellMat} />
@@ -140,10 +145,9 @@ const Jellyfish = ({ index, position, colors }) => {
           key={i} 
           position={[t.x, -0.05, t.z]} 
           ref={el => tentaclesRef.current[i] = el}
-        >
-          <tubeGeometry args={[t.curve, 20, 0.02, 8, false]} />
-          <primitive object={tentacleMat} attach="material" />
-        </mesh>
+          geometry={tentacleGeometries[i]}
+          material={tentacleMat}
+        />
       ))}
 
       <pointLight

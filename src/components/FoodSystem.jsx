@@ -2,47 +2,43 @@ import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import disposalManager from '../utils/DisposalManager';
-import useCursorWorld from '../hooks/useCursorWorld';
 
 const MAX_FOOD_PARTICLES = 80;
 const dummy = new THREE.Object3D();
 
 const FoodSystem = ({ foodRef }) => {
   const meshRef = useRef();
-  const { cursorWorld } = useCursorWorld();
-
-  const spawnFood = (e) => {
-    const count = 12;
+  
+  // Handle feeding ONLY when clicking this specific interaction plane
+  const handleFeed = (e) => {
+    e.stopPropagation(); // Stop if we hit a UI element
+    const point = e.point;
+    
+    const count = 10;
     for (let i = 0; i < count; i++) {
       if (foodRef.current.length < MAX_FOOD_PARTICLES) {
         foodRef.current.push({
-          position: cursorWorld.current.clone().add(new THREE.Vector3(
-            (Math.random() - 0.5) * 1.5,
-            (Math.random() - 0.5) * 1.5,
-            (Math.random() - 0.5) * 1.5
+          position: point.clone().add(new THREE.Vector3(
+            (Math.random() - 0.5) * 2,
+            (Math.random() - 0.5) * 2,
+            (Math.random() - 0.5) * 2
           )),
           velocity: new THREE.Vector3(
-            (Math.random() - 0.5) * 0.04,
-            -0.08 - Math.random() * 0.1, // Sinking
-            (Math.random() - 0.5) * 0.04
+            (Math.random() - 0.5) * 0.06,
+            -0.08 - Math.random() * 0.1, 
+            (Math.random() - 0.5) * 0.06
           ),
           rotation: new THREE.Euler(Math.random(), Math.random(), Math.random()),
-          rotVel: new THREE.Vector3(Math.random() * 0.15, Math.random() * 0.15, Math.random() * 0.15),
-          lifetime: 10.0, // Last longer
+          rotVel: new THREE.Vector3(Math.random() * 0.1, Math.random() * 0.1, Math.random() * 0.1),
+          lifetime: 8.0,
           expired: false
         });
       }
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('mousedown', spawnFood);
-    return () => window.removeEventListener('mousedown', spawnFood);
-  }, []);
-
   useFrame((state, delta) => {
     if (!meshRef.current) return;
-    
     const particles = foodRef.current;
     
     for (let i = 0; i < MAX_FOOD_PARTICLES; i++) {
@@ -58,20 +54,13 @@ const FoodSystem = ({ foodRef }) => {
           continue;
         }
 
-        p.velocity.y -= 0.0015; 
-        p.velocity.multiplyScalar(0.96); 
+        p.velocity.y -= 0.002; 
+        p.velocity.multiplyScalar(0.97); 
         p.position.add(p.velocity);
         
-        p.rotation.x += p.rotVel.x;
-        p.rotation.y += p.rotVel.y;
-        
         dummy.position.copy(p.position);
-        // Removed lookAt as spheres are symmetrical
-        
-        // Dynamic scale - starts big, stays visible
-        const scale = (p.lifetime / 10.0) * 0.6 + 0.2;
+        const scale = (p.lifetime / 8.0) * 0.5 + 0.1;
         dummy.scale.setScalar(scale);
-        
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
       } else {
@@ -83,28 +72,27 @@ const FoodSystem = ({ foodRef }) => {
     meshRef.current.instanceMatrix.needsUpdate = true;
   });
 
-  const geometry = useMemo(() => disposalManager.track(new THREE.SphereGeometry(0.25, 16, 16)), []);
-  const material = useMemo(() => disposalManager.track(new THREE.MeshPhongMaterial({
-    color: '#fbbf24',
-    emissive: '#f59e0b',
-    emissiveIntensity: 10.0,
-    shininess: 100,
-    side: THREE.DoubleSide
-  })), []);
-
-  useEffect(() => {
-    return () => {
-      geometry.dispose();
-      material.dispose();
-    };
-  }, [geometry, material]);
+  const geometry = useMemo(() => new THREE.IcosahedronGeometry(0.18, 0), []);
+  const material = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#00ffcc',
+    emissive: '#00ffcc',
+    emissiveIntensity: 3,
+  }), []);
 
   return (
-    <instancedMesh
-      ref={meshRef}
-      args={[geometry, material, MAX_FOOD_PARTICLES]}
-      frustumCulled={false}
-    />
+    <>
+      {/* BACKGROUND INTERACTION PLANE - Catches clicks to feed fish */}
+      <mesh position={[0, 0, -5]} onClick={handleFeed}>
+        <planeGeometry args={[100, 100]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
+
+      <instancedMesh
+        ref={meshRef}
+        args={[geometry, material, MAX_FOOD_PARTICLES]}
+        frustumCulled={false}
+      />
+    </>
   );
 };
 

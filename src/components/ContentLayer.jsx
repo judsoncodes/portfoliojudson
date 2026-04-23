@@ -4,12 +4,13 @@ import { useScroll } from '../context/ScrollContext';
 import { profileData } from '../data';
 import RadarChart from './RadarChart';
 import { getInterpolatedZone } from '../utils/depthZones';
+import SkillCreatures from './SkillCreatures';
 
 /**
  * Section Component
  * Handles the glassmorphism card and whileInView animations.
  */
-const Section = ({ title, children, delay = 0 }) => {
+const Section = ({ title, children, delay = 0, transparent = false }) => {
   return (
     <motion.section
       initial={{ opacity: 0, y: 50 }}
@@ -19,8 +20,8 @@ const Section = ({ title, children, delay = 0 }) => {
       className="min-h-screen w-full flex items-center justify-center p-6 md:p-24"
     >
       <motion.div 
-        className="max-w-5xl w-full backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 md:p-16 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative group transition-colors duration-700"
-        style={{ backgroundColor: 'rgba(var(--depth-bg-rgb), 0.6)' }}
+        className={`max-w-5xl w-full backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 md:p-16 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden relative group transition-colors duration-700 pointer-events-auto ${transparent ? 'bg-transparent' : ''}`}
+        style={{ backgroundColor: transparent ? 'transparent' : 'rgba(var(--depth-bg-rgb), 0.6)' }}
         data-sonar-target
       >
         {/* Accent Glow */}
@@ -59,7 +60,7 @@ const Section = ({ title, children, delay = 0 }) => {
  * Renders the portfolio content over the WebGL scene.
  * Syncs real DOM scroll to the virtual scrollProgress context.
  */
-const ContentLayer = () => {
+const ContentLayer = ({ setHoveredSkill }) => {
   const { target, progress } = useScroll();
 
   // Sync CSS variables for the entire DOM layer
@@ -85,18 +86,16 @@ const ContentLayer = () => {
     return () => cancelAnimationFrame(frameId);
   }, [progress]);
 
-  // Mapping string levels to numerical values for the Radar Chart
-  const levelMap = {
-    'Proficient': 95,
-    'Competent': 80,
-    'Intermediate': 65,
-    'Beginner': 40
+  const skillColors = {
+    'React': '#00f2ff',
+    'Python': '#ff007b',
+    'CSS': '#ffea00',
+    'ML/AI': '#9d00ff',
+    'C++': '#ff4d00',
+    'Java': '#00ff44',
+    'SQL': '#0066ff',
+    'ThreeJS': '#ffffff'
   };
-
-  const radarSkills = profileData.skills.map(s => ({
-    name: s.name,
-    value: levelMap[s.level] || 50
-  }));
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
@@ -106,7 +105,7 @@ const ContentLayer = () => {
 
   return (
     <div 
-      className="absolute inset-0 overflow-y-auto scroll-smooth pointer-events-auto hide-scrollbar select-none z-40"
+      className="absolute inset-0 overflow-y-auto scroll-smooth pointer-events-none hide-scrollbar select-none z-40"
       onScroll={handleScroll}
     >
       {/* Hero / About */}
@@ -126,20 +125,35 @@ const ContentLayer = () => {
         </div>
       </Section>
 
-      {/* Radar Skills Section */}
-      <Section title="Arsenal">
-        <div className="flex flex-col lg:flex-row items-center gap-12">
-          <div className="w-full lg:w-1/2 flex justify-center">
-            <RadarChart skills={radarSkills} size={360} />
+      {/* Arsenal Section - Showcasing Skill Creatures */}
+      <Section title="Arsenal" transparent>
+        <div className="flex flex-col items-center gap-12">
+          {/* Interactive 3D Skill Ecosystem */}
+          <div className="w-full h-[600px] rounded-[3rem] border border-white/10 relative overflow-hidden pointer-events-auto shadow-[0_0_80px_rgba(0,0,0,0.8)]">
+            <SkillCreatures />
+            
+            {/* Cinematic Scanning Overlay */}
+            <div className="absolute inset-0 pointer-events-none border-[20px] border-black/20" />
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-500/30 blur-sm animate-[scan_4s_linear_infinite]" />
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
           </div>
-          <div className="w-full lg:w-1/2 grid grid-cols-2 gap-4">
+          
+          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 pointer-events-auto">
             {profileData.skills.map((skill) => (
-              <div key={skill.name} className="p-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group" style={{ borderLeft: '2px solid var(--depth-accent)' }}>
-                <div className="font-bold mb-1 transition-colors" style={{ color: 'var(--depth-accent)' }}>{skill.name}</div>
-                <div className="text-[10px] text-white/40 uppercase tracking-widest mb-2">{skill.level}</div>
-                <div className="text-xs text-white/60 leading-snug">{skill.description}</div>
+              <div 
+                key={skill.name} 
+                className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-sm"
+                style={{ borderTop: `2px solid ${skillColors[skill.name] || 'var(--depth-accent)'}` }}
+              >
+                <div className="font-bold text-sm mb-1 transition-colors" style={{ color: skillColors[skill.name] || 'var(--depth-accent)' }}>{skill.name}</div>
+                <div className="text-[9px] text-white/40 uppercase tracking-widest mb-1">{skill.level}</div>
+                <div className="text-[10px] text-white/60 leading-tight">{skill.description}</div>
               </div>
             ))}
+          </div>
+          
+          <div className="text-center text-white/30 text-[10px] uppercase tracking-[0.4em] animate-pulse">
+            Hover over creatures below to analyze proficiency
           </div>
         </div>
       </Section>
@@ -240,7 +254,7 @@ const ContentLayer = () => {
       </Section>
 
       {/* Footer Space */}
-      <div className="h-[40vh] flex items-end justify-center pb-20">
+      <div className="h-[30vh] flex items-end justify-center pb-20">
         <div className="text-white/10 text-[9px] font-mono uppercase tracking-[1.5em]">
           SYSTEM ONLINE // {profileData.name} // 2026
         </div>

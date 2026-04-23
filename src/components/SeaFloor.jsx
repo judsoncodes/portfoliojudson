@@ -27,8 +27,9 @@ const SeaFloor = () => {
   const vertexShader = `
     varying vec2 vUv;
     varying float vElevation;
+    varying vec3 vNormal;
+    varying vec3 vViewPosition;
     uniform float uTime;
-    uniform float uScrollProgress;
 
     float hash(vec2 p) { 
       return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); 
@@ -42,49 +43,76 @@ const SeaFloor = () => {
                  mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y);
     }
 
+    float getElevation(vec2 p) {
+      float dunes = noise(p * 0.4) * 0.3;
+      float ripples = noise(p * 2.0 + uTime * 0.1) * 0.1;
+      float sand = noise(p * 5.0) * 0.03;
+      return dunes + ripples + sand;
+    }
+
     void main() {
       vUv = uv;
       vec3 newPosition = position;
 
-      // Layer 1 — large dunes
-      // Using xy since PlaneGeometry is generated in the XY plane
-      float dunes = noise(newPosition.xy * 0.15) * 1.8;
-      
-      // Layer 2 — medium ripples
-      float ripples = noise(newPosition.xy * 0.8 + uTime * 0.05) * 0.3;
-      
-      // Layer 3 — fine sand detail
-      float sand = noise(newPosition.xy * 3.0) * 0.08;
-
-      // Displace Z for height (which becomes Y in world space after rotation)
-      float elevation = dunes + ripples + sand;
+      float elevation = getElevation(newPosition.xy);
       newPosition.z += elevation;
       vElevation = elevation;
 
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+      // Compute normals for realistic lighting
+      float e = 0.05;
+      float xElev = getElevation(newPosition.xy + vec2(e, 0.0));
+      float yElev = getElevation(newPosition.xy + vec2(0.0, e));
+      
+      vec3 v0 = newPosition;
+      vec3 v1 = vec3(newPosition.x + e, newPosition.y, xElev);
+      vec3 v2 = vec3(newPosition.x, newPosition.y + e, yElev);
+      
+      vNormal = normalize(cross(v1 - v0, v2 - v0));
+
+      vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
+      vViewPosition = -mvPosition.xyz;
+      gl_Position = projectionMatrix * mvPosition;
     }
   `;
 
   const fragmentShader = `
     varying vec2 vUv;
     varying float vElevation;
+    varying vec3 vNormal;
+    varying vec3 vViewPosition;
     uniform float uTime;
     uniform float uScrollProgress;
 
     void main() {
-      // Blend colors based on displaced height
-      vec3 ridgeColor = vec3(0.784, 0.663, 0.431); // #c8a96e
-      vec3 valleyColor = vec3(0.541, 0.416, 0.227); // #8a6a3a
+      // Natural, clean sand colors
+      vec3 ridgeColor = vec3(0.7, 0.6, 0.45); 
+      vec3 valleyColor = vec3(0.4, 0.35, 0.25); 
       
-      float mixFactor = smoothstep(-1.0, 1.5, vElevation);
-      vec3 color = mix(valleyColor, ridgeColor, mixFactor);
+      float mixFactor = smoothstep(-0.1, 0.3, vElevation);
+      vec3 baseColor = mix(valleyColor, ridgeColor, mixFactor);
 
-      // Caustic shimmer
-      float caustic = sin(vUv.x * 12.0 + uTime) * cos(vUv.y * 12.0 + uTime * 0.7) * 0.06 + 0.06;
-      color += vec3(caustic * 0.4, caustic * 0.6, caustic);
+      // Subtle grain for texture without noise
+      float grain = fract(sin(dot(vUv, vec2(12.9898, 78.233))) * 43758.5453);
+      baseColor += (grain - 0.5) * 0.02;
 
-      // Fade in as user descends
-      float alpha = smoothstep(0.65, 0.80, uScrollProgress);
+      // Clean, bright lighting
+      vec3 normal = normalize(vNormal);
+      vec3 lightDir = normalize(vec3(0.5, 0.8, 0.4));
+      float diffuse = max(dot(normal, lightDir), 0.3); // Brighter ambient
+      
+      vec3 color = baseColor * diffuse;
+
+      // Soft caustic shimmer
+      float caustic = sin(vUv.x * 8.0 + uTime * 0.5) * cos(vUv.y * 8.0 + uTime * 0.4) * 0.02 + 0.02;
+      color += vec3(caustic * 0.5, caustic * 0.6, caustic * 0.7);
+
+      // Distant underwater clarity
+      float depth = length(vViewPosition);
+      float fog = smoothstep(20.0, 60.0, depth);
+      color = mix(color, vec3(0.01, 0.05, 0.1), fog);
+
+      // Smooth visibility reveal
+      float alpha = smoothstep(0.3, 0.85, uScrollProgress);
       gl_FragColor = vec4(color, alpha);
     }
   `;
