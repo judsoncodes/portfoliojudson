@@ -19,7 +19,7 @@ export default function ArtifactsSection({ projects }) {
               background: 'linear-gradient(145deg, rgba(10,25,35,0.8) 0%, rgba(5,15,25,0.9) 100%)',
               backdropFilter: 'blur(20px)',
               borderRadius: '24px',
-              padding: '35px 25px',
+              padding: window.innerWidth < 768 ? '25px 20px' : '35px 25px',
               border: '1px solid rgba(0,255,200,0.08)',
               overflow: 'hidden',
               boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
@@ -90,9 +90,9 @@ export default function ArtifactsSection({ projects }) {
 
             {/* 📄 DESCRIPTION */}
             <p style={{
-              fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', lineHeight: 1.7,
+              fontFamily: "'JetBrains Mono', monospace", fontSize: window.innerWidth < 768 ? '11px' : '13px', lineHeight: 1.7,
               color: 'rgba(200,230,255,0.6)', margin: 0,
-              maxWidth: '90%'
+              maxWidth: '100%'
             }}>
               {proj.description}
             </p>

@@ -69,20 +69,22 @@ export default function SignalSection() {
         </div>
 
         {/* 📡 CONNECTION MATRIX */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px', marginBottom: '60px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px', marginBottom: '40px' }}>
           {[
             { label: 'DOMAIN', value: 'Chennai, India', icon: '⊕' },
             { label: 'ENCRYPTED_ID', value: 'jjudsoncse2024@citchennai.net', icon: '◬' },
             { label: 'UPLINK_CORE', value: 'judsoncodes', icon: '⌬' },
           ].map(item => (
-            <div key={item.label} style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#00ffcc', letterSpacing: '0.3em', marginBottom: '10px' }}>
+            <div key={item.label} style={{ textAlign: 'center', padding: '0 10px' }}>
+              <div style={{ fontFamily: 'monospace', fontSize: '9px', color: '#00ffcc', letterSpacing: '0.2em', marginBottom: '8px' }}>
                 {item.icon} {item.label}
               </div>
               <div style={{
-                fontFamily: 'monospace', fontSize: '13px',
+                fontFamily: 'monospace', fontSize: window.innerWidth < 768 ? '11px' : '13px',
                 color: 'rgba(200,240,255,0.8)',
-                letterSpacing: '0.1em',
+                letterSpacing: '0.05em',
+                wordBreak: 'break-all',
+                overflowWrap: 'anywhere'
               }}>{item.value}</div>
             </div>
           ))}
@@ -154,10 +156,11 @@ export default function SignalSection() {
                   padding: 0,
                   outline: 'none',
                   transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  transform: window.innerWidth < 768 ? 'scale(0.85)' : 'scale(1)'
+                  transform: window.innerWidth < 768 ? 'scale(0.7) translateY(-20px)' : 'scale(1)',
+                  marginTop: window.innerWidth < 768 ? '-20px' : '0'
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-10px) rotate(-3deg) scale(1.05)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0) rotate(0deg) scale(0.85)'}
+                onMouseLeave={e => e.currentTarget.style.transform = window.innerWidth < 768 ? 'scale(0.7) translateY(-20px)' : 'translateY(0) rotate(0deg) scale(1)'}
               >
                 {/* 🛡️ Caustic Glow under bottle */}
                 <div style={{

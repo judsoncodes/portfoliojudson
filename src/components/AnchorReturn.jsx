@@ -62,9 +62,9 @@ export default function AnchorReturn() {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center',
-      padding: '0 0 120px', gap: '0', 
+      padding: window.innerWidth < 768 ? '0 0 80px' : '0 0 120px', gap: '0', 
       position: 'relative',
-      marginTop: '-140px', // Pulled up even further to deeply attach to the section above
+      marginTop: window.innerWidth < 768 ? '-80px' : '-140px', // Pulled up even further to deeply attach to the section above
       pointerEvents: 'none' // Prevent this wide container from blocking clicks behind it
     }}>
       {/* ⚓ THE HYPER-REALISTIC IRON ANCHOR */}
@@ -80,7 +80,7 @@ export default function AnchorReturn() {
         onClick={handleReturn}
       >
         {/* Chain */}
-        <div style={{ position: 'relative', height: '250px', zIndex: 1 }}>
+        <div style={{ position: 'relative', height: window.innerWidth < 768 ? '150px' : '250px', zIndex: 1, transform: window.innerWidth < 768 ? 'scale(0.7)' : 'scale(1)', transformOrigin: 'top' }}>
           <svg width="40" height="250" viewBox="0 0 40 250" fill="none">
             <defs>
               <linearGradient id="linkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -103,7 +103,7 @@ export default function AnchorReturn() {
         </div>
 
         {/* Anchor Body */}
-        <div style={{ position: 'relative', top: '-10px', zIndex: 2 }}>
+        <div style={{ position: 'relative', top: window.innerWidth < 768 ? '-40px' : '-10px', zIndex: 2, transform: window.innerWidth < 768 ? 'scale(0.7)' : 'scale(1)' }}>
           <svg width="120" height="150" viewBox="0 0 100 120" fill="none">
           <defs>
             <linearGradient id="ironDusk" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -129,7 +129,13 @@ export default function AnchorReturn() {
         </svg>
       </div>
       
-      <div style={{ fontFamily: 'monospace', fontSize: '12px', color: '#00ffcc', letterSpacing: '0.25em', marginTop: '10px', textShadow: '0 0 10px rgba(0,255,200,0.5)' }}>
+      <div style={{ 
+        fontFamily: 'monospace', fontSize: window.innerWidth < 768 ? '9px' : '12px', 
+        color: '#00ffcc', letterSpacing: '0.25em', 
+        marginTop: window.innerWidth < 768 ? '-30px' : '10px', 
+        textShadow: '0 0 10px rgba(0,255,200,0.5)',
+        paddingBottom: 'env(safe-area-inset-bottom)'
+      }}>
         [ PULL ANCHOR TO MOVE UP ]
       </div>
 
@@ -168,7 +174,11 @@ export default function AnchorReturn() {
             </div>
 
             {/* Central Altimeter HUD */}
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '350px', height: '350px' }}>
+            <div style={{ 
+              position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              width: window.innerWidth < 768 ? '260px' : '350px', 
+              height: window.innerWidth < 768 ? '260px' : '350px' 
+            }}>
                 {/* Rotating Tech Rings */}
                 <div className="hud-ring-outer" />
                 <div className="hud-ring-inner" />

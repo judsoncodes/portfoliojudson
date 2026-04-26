@@ -92,11 +92,11 @@ function App() {
         )}
       </ScrollProvider>
       
-      {/* UI Overlay */}
+      {/* UI Overlay: Logo & Title */}
       {!isLoading && (
-        <div className="absolute top-3 left-4 md:fixed md:top-10 md:left-10 text-white pointer-events-none mix-blend-difference z-[70]">
-          <h1 className="text-lg md:text-4xl font-black tracking-tighter uppercase italic font-outfit">JUDSON J</h1>
-          <p className="text-[6px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.6em] opacity-50 font-mono">Abyssal Architect // Fullstack Engineer</p>
+        <div className="fixed top-4 left-4 md:top-10 md:left-10 text-white pointer-events-none mix-blend-difference z-[70] flex flex-col gap-1">
+          <h1 className="text-xl md:text-4xl font-black tracking-tighter uppercase italic font-outfit leading-none">JUDSON J</h1>
+          <p className="text-[6px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.6em] opacity-60 font-mono">Abyssal Architect // Fullstack Engineer</p>
         </div>
       )}
       <CinematicLens />

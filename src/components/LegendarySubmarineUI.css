@@ -121,6 +121,16 @@
   text-transform: uppercase;
 }
 
+@media (max-width: 768px) {
+  .legend-title {
+    font-size: 14vw;
+    line-height: 1.05;
+    letter-spacing: -0.05em;
+    padding-right: 10px;
+    margin-bottom: 5px;
+  }
+}
+
 .legend-subtitle {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;

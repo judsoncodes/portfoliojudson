@@ -188,7 +188,7 @@ const RadarChart = ({ skills = [], size = 320 }) => {
         {/* Interactive Axis Handles & Labels */}
         {skills.map((skill, i) => {
           const labelAngle = i * angleStep - Math.PI / 2;
-          const labelDist = radius + 40;
+          const labelDist = window.innerWidth < 768 ? radius + 55 : radius + 40;
           const lx = center + Math.cos(labelAngle) * labelDist;
           const ly = center + Math.sin(labelAngle) * labelDist;
 

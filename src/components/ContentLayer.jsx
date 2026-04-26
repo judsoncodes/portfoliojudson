@@ -29,7 +29,7 @@ const Section = ({ title, children, delay = 0, transparent = false, id }) => {
     >
 
       <motion.div 
-        className={`max-w-4xl w-full border border-cyan-400/5 rounded-2xl md:rounded-[2.5rem] p-6 md:p-10 overflow-hidden relative group transition-colors duration-700 pointer-events-auto ${transparent ? 'bg-transparent' : ''}`}
+        className={`max-w-4xl w-full border border-cyan-400/5 rounded-3xl md:rounded-[2.5rem] p-5 md:p-10 overflow-hidden relative group transition-colors duration-700 pointer-events-auto ${transparent ? 'bg-transparent' : ''}`}
         style={{ 
           backgroundColor: 'transparent',
           border: '1px solid rgba(0, 255, 200, 0.05)',
@@ -137,23 +137,25 @@ const ContentLayer = ({ setHoveredSkill }) => {
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
           </div>
           
-          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 pointer-events-auto">
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 pointer-events-auto">
              {/* Radar Visualization */}
              <div className="w-full md:w-1/2 flex justify-center">
-                <RadarChart skills={profileData.skills} size={window.innerWidth < 768 ? 280 : 400} />
+                <RadarChart skills={profileData.skills} size={window.innerWidth < 450 ? 240 : window.innerWidth < 768 ? 300 : 400} />
              </div>
 
              {/* Detailed Skill Grid */}
-             <div className="w-full md:w-1/2 grid grid-cols-2 gap-3 md:gap-4">
+             <div className="w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               {profileData.skills.map((skill) => (
                 <div 
                   key={skill.name} 
-                  className="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-sm"
+                  className="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-md"
                   style={{ borderTop: `2px solid ${skillColors[skill.name] || 'var(--depth-accent)'}` }}
                 >
-                  <div className="font-bold text-[10px] md:text-sm mb-1 transition-colors" style={{ color: skillColors[skill.name] || 'var(--depth-accent)' }}>{skill.name}</div>
-                  <div className="text-[7px] md:text-[9px] text-white/40 uppercase tracking-widest mb-1">{skill.level} ({skill.value}%)</div>
-                  <div className="text-[8px] md:text-[10px] text-white/60 leading-tight hidden sm:block">{skill.description}</div>
+                  <div className="flex justify-between items-center mb-1">
+                    <div className="font-bold text-xs md:text-sm transition-colors" style={{ color: skillColors[skill.name] || 'var(--depth-accent)' }}>{skill.name}</div>
+                    <div className="text-[8px] md:text-[9px] text-white/40 uppercase tracking-widest">{skill.level}%</div>
+                  </div>
+                  <div className="text-[9px] md:text-[10px] text-white/60 leading-tight block">{skill.description}</div>
                 </div>
               ))}
             </div>

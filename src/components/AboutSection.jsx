@@ -100,15 +100,15 @@ export default function AboutSection() {
                   <div className="absolute inset-0 bg-gradient-to-t from-cyan-950/80 via-transparent to-cyan-400/5 pointer-events-none mix-blend-overlay" />
                   
                   {/* DATA MATRIX OVERLAY */}
-                  <div className="absolute top-2 md:top-4 right-2 md:right-4 text-right font-mono text-[6px] md:text-[8px] text-cyan-400/60 leading-tight">
+                  <div className="absolute top-2 right-2 text-right font-mono text-[7px] md:text-[8px] text-cyan-400/60 leading-tight">
                     DEEP_SCAN_ACTIVE<br/>
                     LAT: 12.9716 N<br/>
                     LON: 80.2437 E
                   </div>
 
-                  <div className="absolute bottom-3 md:bottom-6 left-3 md:left-6 right-3 md:right-6 p-3 md:p-4 bg-black/70 border border-white/10 backdrop-blur-md rounded-lg">
-                    <div className="font-mono text-[6px] md:text-[8px] text-cyan-500 tracking-[0.4em] mb-1 uppercase">Personnel ID</div>
-                    <div className="text-base md:text-xl font-black italic tracking-tighter text-white uppercase leading-none">Judson J</div>
+                  <div className="absolute bottom-2 md:bottom-6 left-2 md:left-6 right-2 md:right-6 p-2 md:p-4 bg-black/80 border border-white/10 backdrop-blur-md rounded-lg">
+                    <div className="font-mono text-[7px] md:text-[8px] text-cyan-500 tracking-[0.4em] mb-1 uppercase">Personnel ID</div>
+                    <div className="text-sm md:text-xl font-black italic tracking-tighter text-white uppercase leading-none">Judson J</div>
                     <div className="flex gap-1 mt-2 md:mt-3">
                       {[1,2,3,4,5].map(i => <div key={i} className={`h-0.5 md:h-1 flex-1 ${i < 5 ? 'bg-cyan-500 shadow-[0_0_5px_rgba(0,255,200,0.5)]' : 'bg-white/10'} rounded-full`} />)}
                     </div>
