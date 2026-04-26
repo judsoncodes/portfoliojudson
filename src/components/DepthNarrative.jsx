@@ -3,14 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./DepthNarrative.css";
 
 const waypoints = [
-  { scroll: 0.00, text: "ENTERING THE REEF..." },
-  { scroll: 0.14, text: "SCHOOLS OF FISH SCATTER AS YOU APPROACH" },
-  { scroll: 0.28, text: "THE LIGHT FADES. YOU DESCEND." },
-  { scroll: 0.42, text: "CORAL TOWERS RISE FROM THE DARK" },
-  { scroll: 0.56, text: "PRESSURE BUILDS. 500 METERS DOWN." },
-  { scroll: 0.70, text: "THE SEABED. FEW HAVE WALKED HERE." },
-  { scroll: 0.85, text: "HERE, LIFE GLOWS FROM WITHIN." },
-  { scroll: 0.97, text: "THE ABYSS. THIS IS WHERE I BUILD THINGS." },
+  { scroll: 0.00, text: "[SYSTEM]: INITIALIZING DESCENT SEQUENCE..." },
+  { scroll: 0.14, text: "[SCAN]: PASSING SUNLIT ZONE. BIO-SIGNS NORMAL." },
+  { scroll: 0.28, text: "[SYSTEM]: ENTERING TWILIGHT ZONE. LIGHT FADING." },
+  { scroll: 0.42, text: "[WARNING]: EXTERNAL PRESSURE CRITICAL." },
+  { scroll: 0.56, text: "[SYSTEM]: ABYSSAL ZONE REACHED. ZERO SUNLIGHT." },
+  { scroll: 0.70, text: "[SCAN]: UNKNOWN MASSIVE ENERGY SIGNATURE DETECTED..." },
+  { scroll: 0.85, text: "[SYSTEM]: APPROACHING ANOMALY. INITIATING OVERRIDE." },
+  { scroll: 0.97, text: "[SCAN]: THE ABYSSAL HEART FOUND. TARGET LOCKED AT [X: 0, Y: -14, Z: -65]" },
 ];
 
 // ✨ Typewriter

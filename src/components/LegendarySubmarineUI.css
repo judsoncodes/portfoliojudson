@@ -259,3 +259,39 @@
   animation: rotateSonar 4s linear infinite;
   transform-origin: center;
 }
+
+/* 🎯 SONAR PING SYNC ANIMATIONS */
+@keyframes sonar-ping-dot {
+  0%, 60% { opacity: 0.15; transform: scale(1); box-shadow: none; }
+  62% { opacity: 1; transform: scale(2.5); box-shadow: 0 0 12px #00ffcc; background-color: #ffffff; }
+  66% { opacity: 0.6; transform: scale(1); box-shadow: 0 0 5px #00ffcc; background-color: #00ffcc; }
+  100% { opacity: 0.15; transform: scale(1); }
+}
+
+@keyframes sonar-ping-text {
+  0%, 60% { opacity: 0; }
+  62% { opacity: 1; }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes scanning-fade {
+  0%, 60% { opacity: 0.6; }
+  61%, 80% { opacity: 0; }
+  81%, 100% { opacity: 0.6; }
+}
+
+.abyssal-blip {
+  animation: sonar-ping-dot 4s infinite linear;
+  background-color: #00ffcc;
+}
+
+.abyssal-blip-text {
+  animation: sonar-ping-text 4s infinite linear;
+  color: #00ffcc;
+  text-shadow: 0 0 8px rgba(0,255,200,0.8);
+}
+
+.scanning-text-layer {
+  animation: scanning-fade 4s infinite linear;
+}

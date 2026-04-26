@@ -59,9 +59,9 @@ function App() {
             near: 0.1,
             far: 200
           }}
-          style={{ background: '#00050a' }}
+          style={{ background: '#000000' }}
         >
-          <color attach="background" args={['#00050a']} />
+          <color attach="background" args={['#000000']} />
           <Suspense fallback={null}>
             <SceneManager setHoveredSkill={setHoveredSkill} />
             {showWaveWash && (

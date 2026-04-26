@@ -21,10 +21,12 @@ import MantaRay from './components/MantaRay';
 import ProjectPanels from './components/ProjectPanels';
 import CurrentStreams from './components/CurrentStreams';
 import BubbleVents from './components/BubbleVents';
-import Sky from './components/Sky';
+import HydrothermalVents from './components/HydrothermalVents';
+import AbyssalRuins from './components/AbyssalRuins';
+import LeviathanSilhouette from './components/LeviathanSilhouette';
 import CausticsLayer from './components/CausticsLayer';
-
-
+import { getInterpolatedZone } from './utils/depthZones';
+import PlanktonTrails from './components/PlanktonTrails';
 
 import disposalManager from './utils/DisposalManager';
 import MemoryMonitor from './components/MemoryMonitor';
@@ -84,7 +86,8 @@ const SceneManager = ({ setHoveredSkill }) => {
     }
 
     // 2. Dynamic Fog & Background
-    const fogColor = new THREE.Color('#010b14').lerp(new THREE.Color('#000000'), s);
+    const zone = getInterpolatedZone(s);
+    const fogColor = new THREE.Color(zone.bg);
     state.scene.fog.color.copy(fogColor);
     state.scene.fog.near = THREE.MathUtils.lerp(5, 2, s);
     state.scene.fog.far = THREE.MathUtils.lerp(45, 25, s);
@@ -136,14 +139,13 @@ const SceneManager = ({ setHoveredSkill }) => {
 
   return (
     <>
-      <MemoryMonitor />
+      <color attach="background" args={['#000000']} />
       <fog attach="fog" args={['#010b14', 5, 45]} />
       
       <Lights />
       <VolumetricLighting />
       
       <group name="SceneGraph" ref={sceneGraphRef}>
-        <Sky />
         <OceanBackground />
         <CausticsLayer />
         <MarineSnow count={profile.marineSnowCount} />
@@ -155,6 +157,9 @@ const SceneManager = ({ setHoveredSkill }) => {
         </group>
         <SonarPulse />
         <SeaFloor />
+        <HydrothermalVents />
+        <AbyssalRuins />
+        <LeviathanSilhouette />
         <CoralSystem />
         <KelpForest />
         <SeabedDetails />
@@ -164,6 +169,7 @@ const SceneManager = ({ setHoveredSkill }) => {
         <FishSystem />
         <MantaRay />
         <ProjectPanels />
+        <PlanktonTrails />
 
 
         
