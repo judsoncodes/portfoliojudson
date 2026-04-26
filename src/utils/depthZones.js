@@ -7,23 +7,23 @@ export const DEPTH_ZONES = {
   SUNLIT: {
     start: 0,
     end: 0.33,
-    top: '#0E7490',
-    bottom: '#0891B2',
-    accent: '#22d3ee'
+    top: '#002244',
+    bottom: '#0044aa',
+    accent: '#0066FF' // Blue
   },
   TWILIGHT: {
     start: 0.33,
     end: 0.66,
-    top: '#1E3A5F',
-    bottom: '#0F2040',
-    accent: '#3b82f6'
+    top: '#001122',
+    bottom: '#002244',
+    accent: '#00AACC' // Transition Teal
   },
   ABYSSAL: {
     start: 0.66,
     end: 1.0,
-    top: '#020A12',
-    bottom: '#000000',
-    accent: '#00FF88'
+    top: '#000000',
+    bottom: '#051105',
+    accent: '#39FF14' // Neon Green
   }
 };
 

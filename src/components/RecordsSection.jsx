@@ -18,7 +18,7 @@ export default function RecordsSection() {
         position: 'relative',
         background: 'linear-gradient(160deg, rgba(2, 10, 15, 0.4) 0%, rgba(0, 20, 30, 0.6) 100%)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(0,255,150,0.12)',
+        border: window.innerWidth < 768 ? '1px solid rgba(0,255,150,0.2)' : '1px solid rgba(0,255,150,0.12)',
         borderRadius: '8px',
         overflow: 'hidden',
         boxShadow: '0 0 80px rgba(0,255,136,0.06), inset 0 0 60px rgba(0,20,10,0.8)',
@@ -52,7 +52,7 @@ export default function RecordsSection() {
         </div>
 
         {/* 📟 VAULT CONTENT */}
-        <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(30px, 6vw, 60px) clamp(10px, 4vw, 40px) 40px clamp(15px, 8vw, 80px)' }}>
+        <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(25px, 6vw, 60px) clamp(10px, 4vw, 40px) 30px clamp(20px, 8vw, 80px)' }}>
           
           <div style={{ marginBottom: '40px' }}>
             <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#00ff8888', letterSpacing: '0.5em', marginBottom: '10px' }}>
@@ -60,7 +60,7 @@ export default function RecordsSection() {
             </div>
             <h2 style={{
               fontFamily: '"Arial Black", sans-serif',
-              fontSize: 'clamp(32px, 8vw, 52px)', fontWeight: 900, fontStyle: 'italic',
+              fontSize: 'clamp(28px, 6vw, 52px)', fontWeight: 900, fontStyle: 'italic',
               color: '#fff', textShadow: '0 0 30px rgba(0,255,136,0.5)',
               margin: 0, letterSpacing: '-0.02em', lineHeight: 1
             }}>RECORDS</h2>
@@ -94,7 +94,7 @@ export default function RecordsSection() {
                 <div style={{ display: 'flex', gap: 'clamp(15px, 5vw, 25px)', position: 'relative', zIndex: 1 }}>
                   <span style={{
                     fontFamily: '"Arial Black", monospace',
-                    fontSize: 'clamp(20px, 6vw, 32px)', fontWeight: 900,
+                    fontSize: 'clamp(18px, 4vw, 32px)', fontWeight: 900,
                     color: 'rgba(0,255,136,0.15)',
                     lineHeight: 1, flexShrink: 0,
                   }}>#{item.id}</span>

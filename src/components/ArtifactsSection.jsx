@@ -26,6 +26,7 @@ export default function ArtifactsSection({ projects }) {
               cursor: 'pointer',
               transition: 'all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)'
             }}
+            onClick={() => proj.github && window.open(proj.github, '_blank')}
             onMouseEnter={e => {
               e.currentTarget.style.transform = 'translateY(-10px) scale(1.01)';
               e.currentTarget.style.borderColor = 'rgba(0,255,200,0.3)';
@@ -47,20 +48,20 @@ export default function ArtifactsSection({ projects }) {
             {/* 🏷️ CLASSIFICATION LABEL */}
             <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              marginBottom: '35px'
+              marginBottom: '20px'
             }}>
               <div style={{
-                fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: '#00ffcc', 
+                fontFamily: "'JetBrains Mono', monospace", fontSize: '8px', color: '#00ffcc', 
                 letterSpacing: '0.4em', background: 'rgba(0,255,200,0.1)', 
-                padding: '8px 16px', borderRadius: '4px', textTransform: 'uppercase'
+                padding: '6px 12px', borderRadius: '4px', textTransform: 'uppercase'
               }}>
                 Relict_v0{i+1}
               </div>
               <div style={{
-                fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: 'rgba(255,255,255,0.2)',
-                letterSpacing: '0.2em'
+                fontFamily: "'JetBrains Mono', monospace", fontSize: '8px', color: 'rgba(255,255,255,0.2)',
+                letterSpacing: '0.1em'
               }}>
-                8K_DEPTH
+                {proj.period}
               </div>
             </div>
 
@@ -78,7 +79,7 @@ export default function ArtifactsSection({ projects }) {
             <div style={{
               display: 'flex', gap: '8px', marginBottom: '30px', flexWrap: 'wrap'
             }}>
-              {proj.period.split('|').map(tech => (
+              {(proj.tech || "").split('|').map(tech => (
                 <span key={tech} style={{
                   fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', color: 'rgba(0,255,200,0.6)',
                   border: '1px solid rgba(0,255,200,0.15)', padding: '4px 10px',

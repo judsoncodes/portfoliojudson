@@ -10,20 +10,24 @@ import RecordsSection from './RecordsSection';
 import SignalSection from './SignalSection';
 import ArtifactsSection from './ArtifactsSection';
 import AnchorReturn from './AnchorReturn';
+import MissionTimeline from './MissionTimeline';
+
 
 /**
  * Section Component
  * Handles the glassmorphism card and whileInView animations.
  */
-const Section = ({ title, children, delay = 0, transparent = false }) => {
+const Section = ({ title, children, delay = 0, transparent = false, id }) => {
   return (
     <motion.section
-      initial={{ opacity: 0, y: 50 }}
+      id={id}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, margin: "-20px" }}
       transition={{ duration: 0.8, delay, ease: "easeOut" }}
       className="min-h-screen w-full flex items-center justify-center p-4 md:p-12 lg:p-24"
     >
+
       <motion.div 
         className={`max-w-4xl w-full border border-cyan-400/5 rounded-2xl md:rounded-[2.5rem] p-6 md:p-10 overflow-hidden relative group transition-colors duration-700 pointer-events-auto ${transparent ? 'bg-transparent' : ''}`}
         style={{ 
@@ -59,11 +63,6 @@ const Section = ({ title, children, delay = 0, transparent = false }) => {
   );
 };
 
-/**
- * ContentLayer
- * Renders the portfolio content over the WebGL scene.
- * Syncs real DOM scroll to the virtual scrollProgress context.
- */
 /**
  * ContentLayer
  * Renders the portfolio content over the WebGL scene.
@@ -115,17 +114,17 @@ const ContentLayer = ({ setHoveredSkill }) => {
   return (
     <div 
       id="abyss-scroll-container"
-      className="absolute inset-0 overflow-y-auto scroll-smooth pointer-events-auto hide-scrollbar select-none z-40"
+      className="absolute inset-0 overflow-y-auto scroll-smooth pointer-events-auto hide-scrollbar z-40"
       onScroll={handleScroll}
     >
       {/* Hero / About */}
-      <div className="pt-40 md:pt-0">
+      <div className="pt-20 md:pt-0">
         <Section title="" transparent={true}>
           <AboutSection />
         </Section>
       </div>
 
-      {/* Arsenal Section - Showcasing Skill Creatures */}
+      {/* Arsenal Section - Showcasing Skill Creatures & Radar */}
       <Section title="Arsenal" transparent>
         <div className="flex flex-col items-center gap-12">
           {/* Interactive 3D Skill Ecosystem */}
@@ -138,22 +137,30 @@ const ContentLayer = ({ setHoveredSkill }) => {
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
           </div>
           
-          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 pointer-events-auto">
-            {profileData.skills.map((skill) => (
-              <div 
-                key={skill.name} 
-                className="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-sm"
-                style={{ borderTop: `2px solid ${skillColors[skill.name] || 'var(--depth-accent)'}` }}
-              >
-                <div className="font-bold text-[10px] md:text-sm mb-1 transition-colors" style={{ color: skillColors[skill.name] || 'var(--depth-accent)' }}>{skill.name}</div>
-                <div className="text-[7px] md:text-[9px] text-white/40 uppercase tracking-widest mb-1">{skill.level}</div>
-                <div className="text-[8px] md:text-[10px] text-white/60 leading-tight hidden sm:block">{skill.description}</div>
-              </div>
-            ))}
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 pointer-events-auto">
+             {/* Radar Visualization */}
+             <div className="w-full md:w-1/2 flex justify-center">
+                <RadarChart skills={profileData.skills} size={window.innerWidth < 768 ? 280 : 400} />
+             </div>
+
+             {/* Detailed Skill Grid */}
+             <div className="w-full md:w-1/2 grid grid-cols-2 gap-3 md:gap-4">
+              {profileData.skills.map((skill) => (
+                <div 
+                  key={skill.name} 
+                  className="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-sm"
+                  style={{ borderTop: `2px solid ${skillColors[skill.name] || 'var(--depth-accent)'}` }}
+                >
+                  <div className="font-bold text-[10px] md:text-sm mb-1 transition-colors" style={{ color: skillColors[skill.name] || 'var(--depth-accent)' }}>{skill.name}</div>
+                  <div className="text-[7px] md:text-[9px] text-white/40 uppercase tracking-widest mb-1">{skill.level} ({skill.value}%)</div>
+                  <div className="text-[8px] md:text-[10px] text-white/60 leading-tight hidden sm:block">{skill.description}</div>
+                </div>
+              ))}
+            </div>
           </div>
           
           <div className="text-center text-white/30 text-[10px] uppercase tracking-[0.4em] animate-pulse">
-            Hover over creatures below to analyze proficiency
+            Analyze biometric proficiency markers above
           </div>
         </div>
       </Section>
@@ -163,9 +170,18 @@ const ContentLayer = ({ setHoveredSkill }) => {
         <ArtifactsSection projects={profileData.projects} />
       </Section>
 
-      {/* Achievements / Internships */}
+      {/* Achievements / Internships & Mission Timeline */}
       <Section title="" transparent={true}>
-        <RecordsSection />
+        <div className="flex flex-col gap-20">
+          <RecordsSection />
+          <div className="border-t border-white/5 pt-20">
+             <div className="text-center mb-12">
+                <div className="font-mono text-[10px] text-cyan-500/50 tracking-[0.6em] mb-4 uppercase">// TEMPORAL_MISSION_LOG</div>
+                <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase">Progression Timeline</h2>
+             </div>
+             <MissionTimeline events={profileData.missionTimeline} />
+          </div>
+        </div>
       </Section>
 
       {/* Contact */}
@@ -181,6 +197,12 @@ const ContentLayer = ({ setHoveredSkill }) => {
       <style>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes scan {
+          0% { top: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
       `}</style>
     </div>
   );

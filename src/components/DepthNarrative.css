@@ -8,35 +8,38 @@
 /* MAIN CAPTION */
 .depth-caption {
   position: absolute;
-  bottom: 12%;
+  bottom: 8%;
   left: 50%;
   transform: translateX(-50%);
 
   font-family: 'Courier New', monospace;
-  font-size: clamp(11px, 1.8vw, 16px);
+  font-size: clamp(9px, 1.8vw, 16px);
   letter-spacing: 0.22em;
   color: rgba(180, 220, 255, 0.9);
   text-align: center;
   text-transform: uppercase;
 
-  padding: 10px 24px;
+  padding: 8px 16px;
 
   border-left: 1px solid rgba(0,255,200,0.3);
   border-right: 1px solid rgba(0,255,200,0.3);
 
   backdrop-filter: blur(6px);
 
-  /* 🌊 scanlines */
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.04) 2px,
-    rgba(0, 0, 0, 0.04) 4px
-  );
+  background: rgba(0,0,0,0.4);
 
   /* ✨ subtle breathing animation */
   animation: pulseDepth 4s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .depth-caption {
+    bottom: 4%;
+    width: 80%;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    padding: 6px 12px;
+  }
 }
 
 /* 👻 glitch ghost layer */

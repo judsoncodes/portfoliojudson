@@ -16,12 +16,13 @@
 
 @media (max-width: 768px) {
   .legend-sub-root {
-    padding: 30px 10px;
+    padding: 20px 15px;
     border-radius: 0;
     background: transparent;
     border: none;
     border-top: 1px solid rgba(0, 255, 200, 0.2);
     border-bottom: 1px solid rgba(0, 255, 200, 0.2);
+    overflow: visible;
   }
 }
 
@@ -83,6 +84,7 @@
   .crystal-card {
     padding: 15px 12px;
     border-radius: 12px;
+    overflow: visible;
   }
 }
 
@@ -105,23 +107,24 @@
 /* ⚡ LEGENDARY TYPOGRAPHY */
 .legend-title {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(24px, 9vw, 100px);
+  font-size: clamp(32px, 12vw, 100px);
   font-weight: 800;
   font-style: italic;
-  background: linear-gradient(to bottom, #fff 40%, #00ffcc);
+  background: linear-gradient(to bottom, #fff 40%, var(--depth-accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.04em;
-  line-height: 0.9;
+  line-height: 1.1;
   margin: 0;
-  filter: drop-shadow(0 0 20px rgba(0,255,200,0.3));
+  padding-right: 15px; /* Prevent italic clipping */
+  filter: drop-shadow(0 0 20px var(--depth-accent-glow));
   text-transform: uppercase;
 }
 
 .legend-subtitle {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: #00ffcc;
+  color: var(--depth-accent);
   letter-spacing: 0.6em;
   text-transform: uppercase;
   margin-bottom: 20px;
@@ -130,7 +133,7 @@
 
 /* 🔋 REACTOR NODES */
 .reactor-node {
-  padding: 15px md:25px;
+  padding: 15px 25px;
   background: rgba(0,255,200,0.05);
   border: 1px solid rgba(0,255,200,0.2);
   text-align: center;

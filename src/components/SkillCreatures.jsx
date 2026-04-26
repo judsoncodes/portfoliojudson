@@ -87,6 +87,7 @@ const HyperNode = ({ skill, index, onHover }) => {
         <mesh 
           onPointerOver={(e) => { e.stopPropagation(); setHovered(true); onHover(skill); }}
           onPointerOut={() => { setHovered(false); onHover(null); }}
+          onClick={(e) => { e.stopPropagation(); onHover(skill); }}
         >
           <mesh ref={innerCoreRef} geometry={SHARED_GEO.core}>
             <MeshDistortMaterial 
@@ -170,7 +171,11 @@ const SkillCreatures = () => {
 
   return (
     <div className="w-full h-full relative rounded-[3rem] overflow-hidden bg-[#000205] border border-white/5 shadow-2xl group cursor-crosshair">
-      <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 20], fov: 45 }}>
+      <Canvas 
+        dpr={[1, 2]} 
+        camera={{ position: [0, 0, 20], fov: 45 }}
+        onPointerDown={() => setHoveredSkill(null)}
+      >
         <fog attach="fog" args={['#000205', 10, 40]} />
         <ambientLight intensity={0.2} />
         <pointLight position={[10, 10, 10]} intensity={1} color="#00f2ff" />
@@ -206,6 +211,9 @@ const SkillCreatures = () => {
           </div>
           <div className="mt-6 h-1 w-full bg-white/5 rounded-full overflow-hidden">
             <div className="h-full animate-pulse" style={{ width: `${hoveredSkill?.level}%`, backgroundColor: hoveredSkill?.color }} />
+          </div>
+          <div className="mt-4 md:hidden text-[8px] font-mono text-white/20 tracking-widest uppercase">
+            [ Tap background to close ]
           </div>
         </div>
       </div>
